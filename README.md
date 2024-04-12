@@ -1,5 +1,11 @@
-# PHP Composer project template
+# Archict/core
 
-This PHP template uses composer to manage dependencies and autoload.
+> In the Land of PHP where the Shadows lie.
+>
+> One Brick to rule them all, One Brick to find them,
+>
+> One Brick to bring them all, and in the darkness bind them
+>
+> In the Land of PHP where the Shadows lie.
 
-To begin use this template, just change the namespace in `composer.json`.
+Heart of Archict, this library load and manage Bricks.
