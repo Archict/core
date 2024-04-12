@@ -1,10 +1,11 @@
 {
-    "name": "gashmob/project-template",
-    "description": "Template for PHP project with composer",
+    "name": "archict/core",
+    "description": "Heart of Archict, this library load and manage Bricks",
+    "license": "MIT",
     "type": "library",
     "autoload": {
         "psr-4": {
-            "Gashmob\\ProjectTemplate\\": "include/"
+            "Archict\\Core\\": "include/"
         }
     },
     "require": {
@@ -12,7 +13,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Gashmob\\ProjectTemplate\\": "tests/unit"
+            "Archict\\Core\\": "tests/unit"
         }
     },
     "require-dev": {
