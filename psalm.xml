@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<psalm
+    findUnusedCode="false"
+>
+    <projectFiles>
+        <directory name="include" />
+        <directory name="tests" />
+    </projectFiles>
+</psalm>
