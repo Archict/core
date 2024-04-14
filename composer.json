@@ -9,11 +9,12 @@
         }
     },
     "require": {
-        "php": ">= 8.2"
+        "php": ">= 8.2",
+        "composer-runtime-api": "^2.2"
     },
     "autoload-dev": {
         "psr-4": {
-            "Archict\\Core\\": "tests/unit"
+            "Archict\\Core\\": ["tests/unit", "tests/lib"]
         }
     },
     "require-dev": {

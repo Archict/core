@@ -25,17 +25,24 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core;
+namespace Archict\Core\Bricks;
 
-use Archict\Core\Bricks\BrickLoaderStub;
-use PHPUnit\Framework\TestCase;
-
-class CoreTest extends TestCase
+final readonly class BrickLoaderStub implements BrickLoader
 {
-    public function testItDoesntThrow(): void
+    /**
+     * @param BrickRepresentation[] $result
+     */
+    private function __construct(private array $result)
     {
-        self::expectNotToPerformAssertions();
-        $core = new Core(BrickLoaderStub::build());
-        $core->load();
+    }
+
+    public static function build(): self
+    {
+        return new self([]);
+    }
+
+    public function loadInstalledBricks(): array
+    {
+        return $this->result;
     }
 }

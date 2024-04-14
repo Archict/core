@@ -27,15 +27,28 @@ declare(strict_types=1);
 
 namespace Archict\Core;
 
+use Archict\Core\Bricks\BrickLoader;
+use Archict\Core\Bricks\LoadBricks;
+
 /**
  * Core of library ;)
  *
  * This class load and manage Services, Events, ...
  */
-final class Core
+final readonly class Core
 {
+    public function __construct(
+        private BrickLoader $brick_loader,
+    ) {
+    }
+
     public function load(): void
     {
-        // Does nothing
+        $_bricks = $this->brick_loader->loadInstalledBricks();
+    }
+
+    public static function build(): self
+    {
+        return new self(new LoadBricks());
     }
 }

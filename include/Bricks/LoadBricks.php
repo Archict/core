@@ -25,17 +25,36 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core;
+namespace Archict\Core\Bricks;
 
-use Archict\Core\Bricks\BrickLoaderStub;
-use PHPUnit\Framework\TestCase;
+use Composer\InstalledVersions;
 
-class CoreTest extends TestCase
+/**
+ * @internal
+ */
+final class LoadBricks implements BrickLoader
 {
-    public function testItDoesntThrow(): void
+    public function loadInstalledBricks(): array
     {
-        self::expectNotToPerformAssertions();
-        $core = new Core(BrickLoaderStub::build());
-        $core->load();
+        $self_name = InstalledVersions::getRootPackage()['name'];
+        $packages  = array_filter(
+            array_unique(InstalledVersions::getInstalledPackagesByType(self::PACKAGE_TYPE)),
+            static fn(string $package) => $package !== $self_name
+        );
+
+        $result = [];
+        foreach ($packages as $package_name) {
+            // Check package is not a dev requirement
+            if (!InstalledVersions::isInstalled($package_name, false)) {
+                continue;
+            }
+
+            $package_path = InstalledVersions::getInstallPath($package_name);
+            if ($package_path !== null) {
+                $result[] = new BrickRepresentation($package_name, $package_path);
+            }
+        }
+
+        return $result;
     }
 }
