@@ -25,17 +25,21 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core\Bricks;
+namespace Archict\Core\Services;
+
+use Archict\Brick\Service;
+use Archict\Brick\ServiceConfiguration;
+use ReflectionClass;
 
 /**
- * Interface for classes which loads Bricks
+ * Intermediate representation of a Service
  */
-interface BrickLoader
+final readonly class ServiceIntermediateRepresentation
 {
-    public const PACKAGE_TYPE = 'archict-brick';
-
-    /**
-     * @return BrickRepresentation[]
-     */
-    public function loadInstalledBricks(): array;
+    public function __construct(
+        public ReflectionClass $reflection,
+        public Service $service_attribute,
+        public ?ServiceConfiguration $service_configuration,
+    ) {
+    }
 }

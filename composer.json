@@ -10,7 +10,9 @@
     },
     "require": {
         "php": ">= 8.2",
-        "composer-runtime-api": "^2.2"
+        "composer-runtime-api": "^2.2",
+        "archict/brick": "^0.1.0",
+        "composer/class-map-generator": "^1.1"
     },
     "autoload-dev": {
         "psr-4": {

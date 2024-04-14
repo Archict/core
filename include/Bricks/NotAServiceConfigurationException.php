@@ -25,17 +25,14 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core;
+namespace Archict\Core\Bricks;
 
-use Archict\Core\Bricks\BricksLoaderStub;
-use PHPUnit\Framework\TestCase;
+use Exception;
 
-class CoreTest extends TestCase
+final class NotAServiceConfigurationException extends Exception
 {
-    public function testItDoesntThrow(): void
+    public function __construct(string $class_name, string $service)
     {
-        self::expectNotToPerformAssertions();
-        $core = new Core(BricksLoaderStub::build());
-        $core->load();
+        parent::__construct("Service '$service' use '$class_name' as ServiceConfiguration, but class doesn't have attribute.");
     }
 }

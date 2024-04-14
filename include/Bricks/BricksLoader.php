@@ -25,17 +25,17 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core;
+namespace Archict\Core\Bricks;
 
-use Archict\Core\Bricks\BricksLoaderStub;
-use PHPUnit\Framework\TestCase;
-
-class CoreTest extends TestCase
+/**
+ * Interface for classes which loads Bricks
+ */
+interface BricksLoader
 {
-    public function testItDoesntThrow(): void
-    {
-        self::expectNotToPerformAssertions();
-        $core = new Core(BricksLoaderStub::build());
-        $core->load();
-    }
+    public const PACKAGE_TYPE = 'archict-brick';
+
+    /**
+     * @return BrickRepresentation[]
+     */
+    public function loadInstalledBricks(): array;
 }

@@ -25,17 +25,9 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core;
+namespace Archict\Core\Fixtures\brick1;
 
-use Archict\Core\Bricks\BricksLoaderStub;
-use PHPUnit\Framework\TestCase;
-
-class CoreTest extends TestCase
+final class SomeClass
 {
-    public function testItDoesntThrow(): void
-    {
-        self::expectNotToPerformAssertions();
-        $core = new Core(BricksLoaderStub::build());
-        $core->load();
-    }
+
 }

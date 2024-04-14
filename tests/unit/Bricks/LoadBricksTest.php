@@ -27,6 +27,8 @@ declare(strict_types=1);
 
 namespace Archict\Core\Bricks;
 
+use Archict\Core\Fixtures\brick1\Service1;
+use Archict\Core\Fixtures\brick1\Service1Configuration;
 use Composer\InstalledVersions;
 use PHPUnit\Framework\TestCase;
 
@@ -40,12 +42,12 @@ class LoadBricksTest extends TestCase
                 'versions' => [
                     'brick1'      => [
                         'dev_requirement' => false,
-                        'type'            => BrickLoader::PACKAGE_TYPE,
+                        'type'            => BricksLoader::PACKAGE_TYPE,
                         'install_path'    => __DIR__ . '/../Fixtures/brick1',
                     ],
                     'brick2'      => [
                         'dev_requirement' => true,
-                        'type'            => BrickLoader::PACKAGE_TYPE,
+                        'type'            => BricksLoader::PACKAGE_TYPE,
                         'install_path'    => __DIR__ . '/../Fixtures/brick2',
                     ],
                     'not_a_brick' => [
@@ -77,5 +79,11 @@ class LoadBricksTest extends TestCase
         $brick = $bricks[0];
         self::assertSame('brick1', $brick->package_name);
         self::assertSame(__DIR__ . '/../Fixtures/brick1', $brick->package_path);
+        self::assertCount(1, $brick->services);
+        $service = $brick->services[0];
+        self::assertSame(Service1::class, $service->reflection->name);
+        self::assertSame('bar.yml', $service->service_attribute->configuration_filename);
+        self::assertSame(Service1Configuration::class, $service->service_attribute->configuration_classname);
+        self::assertNotNull($service->service_configuration);
     }
 }

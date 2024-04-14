@@ -27,13 +27,23 @@ declare(strict_types=1);
 
 namespace Archict\Core\Bricks;
 
+use Archict\Brick\Service;
+use Archict\Brick\ServiceConfiguration;
+use Archict\Core\Services\ServiceIntermediateRepresentation;
+use Composer\ClassMapGenerator\ClassMapGenerator;
 use Composer\InstalledVersions;
+use ReflectionClass;
+use ReflectionException;
 
 /**
  * @internal
  */
-final class LoadBricks implements BrickLoader
+final readonly class LoadBricks implements BricksLoader
 {
+    /**
+     * @throws NotAServiceConfigurationException
+     * @throws ReflectionException
+     */
     public function loadInstalledBricks(): array
     {
         $self_name = InstalledVersions::getRootPackage()['name'];
@@ -51,8 +61,45 @@ final class LoadBricks implements BrickLoader
 
             $package_path = InstalledVersions::getInstallPath($package_name);
             if ($package_path !== null) {
-                $result[] = new BrickRepresentation($package_name, $package_path);
+                $result[] = new BrickRepresentation($package_name, $package_path, $this->loadServicesOfPackage($package_path));
             }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return ServiceIntermediateRepresentation[]
+     * @throws NotAServiceConfigurationException
+     * @throws ReflectionException
+     */
+    private function loadServicesOfPackage(string $package_path): array
+    {
+        $result = [];
+        $map    = ClassMapGenerator::createMap($package_path);
+        foreach ($map as $symbol => $_path) {
+            $reflection = new ReflectionClass($symbol);
+
+            $attributes = $reflection->getAttributes(Service::class);
+            if (empty($attributes)) {
+                // Class is not a Service
+                continue;
+            }
+
+            $service_attribute       = $attributes[0]->newInstance();
+            $configuration_attribute = null;
+            if ($service_attribute->configuration_classname !== null) {
+                $configuration_reflection = new ReflectionClass($service_attribute->configuration_classname);
+
+                $configuration_attributes = $configuration_reflection->getAttributes(ServiceConfiguration::class);
+                if (empty($configuration_attributes)) {
+                    throw new NotAServiceConfigurationException($service_attribute->configuration_classname, $reflection->name);
+                }
+
+                $configuration_attribute = $configuration_attributes[0]->newInstance();
+            }
+
+            $result[] = new ServiceIntermediateRepresentation($reflection, $service_attribute, $configuration_attribute);
         }
 
         return $result;

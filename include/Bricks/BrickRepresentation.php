@@ -27,14 +27,20 @@ declare(strict_types=1);
 
 namespace Archict\Core\Bricks;
 
+use Archict\Core\Services\ServiceIntermediateRepresentation;
+
 /**
  * Representation of what is inside a Brick
  */
 final readonly class BrickRepresentation
 {
+    /**
+     * @param ServiceIntermediateRepresentation[] $services
+     */
     public function __construct(
         public string $package_name,
         public string $package_path,
+        public array $services,
     ) {
     }
 }

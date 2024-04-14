@@ -27,7 +27,7 @@ declare(strict_types=1);
 
 namespace Archict\Core\Bricks;
 
-final readonly class BrickLoaderStub implements BrickLoader
+final readonly class BricksLoaderStub implements BricksLoader
 {
     /**
      * @param BrickRepresentation[] $result

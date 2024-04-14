@@ -27,7 +27,7 @@ declare(strict_types=1);
 
 namespace Archict\Core;
 
-use Archict\Core\Bricks\BrickLoader;
+use Archict\Core\Bricks\BricksLoader;
 use Archict\Core\Bricks\LoadBricks;
 
 /**
@@ -38,7 +38,7 @@ use Archict\Core\Bricks\LoadBricks;
 final readonly class Core
 {
     public function __construct(
-        private BrickLoader $brick_loader,
+        private BricksLoader $brick_loader,
     ) {
     }
 
