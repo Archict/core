@@ -65,7 +65,7 @@ final class ServiceManager
     {
         foreach ($this->services as $service_class => $service) {
             if ($this->isServiceMatchClassName($service_class, $classname)) {
-                return $service;
+                return $service; // @phpstan-ignore-line
             }
         }
 
