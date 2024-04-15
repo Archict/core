@@ -25,22 +25,14 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core\Bricks;
+namespace Archict\Core\Fixtures;
 
-use Archict\Core\Services\ServiceRepresentation;
+use Archict\Core\Fixtures\brick1\Service1;
 
-/**
- * Representation of what is inside a Brick
- */
-final readonly class BrickRepresentation
+final readonly class ServiceWithDependency
 {
-    /**
-     * @param ServiceRepresentation[] $services
-     */
     public function __construct(
-        public string $package_name,
-        public string $package_path,
-        public array $services,
+        public Service1 $service_1,
     ) {
     }
 }

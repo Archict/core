@@ -25,22 +25,30 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core\Bricks;
+namespace Archict\Core\Services;
 
-use Archict\Core\Services\ServiceRepresentation;
+use Archict\Core\Fixtures\brick1\IService1;
+use Archict\Core\Fixtures\brick1\Service1;
+use PHPUnit\Framework\TestCase;
 
-/**
- * Representation of what is inside a Brick
- */
-final readonly class BrickRepresentation
+final class ServiceManagerTest extends TestCase
 {
-    /**
-     * @param ServiceRepresentation[] $services
-     */
-    public function __construct(
-        public string $package_name,
-        public string $package_path,
-        public array $services,
-    ) {
+    public function testItStoreItself(): void
+    {
+        $manager = new ServiceManager();
+        self::assertTrue($manager->has(ServiceManager::class));
+        self::assertSame($manager, $manager->get(ServiceManager::class));
+    }
+
+    public function testItCanStoreThenRetrieveService(): void
+    {
+        $manager = new ServiceManager();
+        $service = new Service1();
+        $manager->add($service);
+
+        self::assertTrue($manager->has(Service1::class));
+        self::assertTrue($manager->has(IService1::class));
+        self::assertSame($service, $manager->get(Service1::class));
+        self::assertSame($service, $manager->get(IService1::class));
     }
 }

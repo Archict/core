@@ -27,19 +27,10 @@ declare(strict_types=1);
 
 namespace Archict\Core\Services;
 
-use Archict\Brick\Service;
-use Archict\Brick\ServiceConfiguration;
-use ReflectionClass;
-
-/**
- * Intermediate representation of a Service
- */
-final readonly class ServiceIntermediateRepresentation
+interface ServicesLoader
 {
-    public function __construct(
-        public ReflectionClass $reflection,
-        public Service $service_attribute,
-        public ?ServiceConfiguration $service_configuration,
-    ) {
-    }
+    /**
+     * @param list<ServiceRepresentation> $services_representation
+     */
+    public function loadServicesIntoManager(ServiceManager $manager, array $services_representation): void;
 }

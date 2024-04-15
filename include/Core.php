@@ -29,6 +29,9 @@ namespace Archict\Core;
 
 use Archict\Core\Bricks\BricksLoader;
 use Archict\Core\Bricks\LoadBricks;
+use Archict\Core\Services\LoadServices;
+use Archict\Core\Services\ServiceManager;
+use Archict\Core\Services\ServicesLoader;
 
 /**
  * Core of library ;)
@@ -37,18 +40,28 @@ use Archict\Core\Bricks\LoadBricks;
  */
 final readonly class Core
 {
+    private ServiceManager $service_manager;
+
     public function __construct(
         private BricksLoader $brick_loader,
+        private ServicesLoader $services_loader,
     ) {
+        $this->service_manager = new ServiceManager();
     }
 
     public function load(): void
     {
-        $_bricks = $this->brick_loader->loadInstalledBricks();
+        $bricks   = $this->brick_loader->loadInstalledBricks();
+        $services = [];
+        foreach ($bricks as $brick) {
+            $services = [...$services, ...$brick->services];
+        }
+
+        $this->services_loader->loadServicesIntoManager($this->service_manager, $services);
     }
 
     public static function build(): self
     {
-        return new self(new LoadBricks());
+        return new self(new LoadBricks(), new LoadServices());
     }
 }

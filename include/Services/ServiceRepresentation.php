@@ -25,22 +25,21 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core\Bricks;
+namespace Archict\Core\Services;
 
-use Archict\Core\Services\ServiceRepresentation;
+use Archict\Brick\Service;
+use Archict\Brick\ServiceConfiguration;
+use ReflectionClass;
 
 /**
- * Representation of what is inside a Brick
+ * Intermediate representation of a Service
  */
-final readonly class BrickRepresentation
+final readonly class ServiceRepresentation
 {
-    /**
-     * @param ServiceRepresentation[] $services
-     */
     public function __construct(
-        public string $package_name,
-        public string $package_path,
-        public array $services,
+        public ReflectionClass $reflection,
+        public Service $service_attribute,
+        public ?ServiceConfiguration $service_configuration,
     ) {
     }
 }

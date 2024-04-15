@@ -30,7 +30,7 @@ namespace Archict\Core\Fixtures\brick1;
 use Archict\Brick\Service;
 
 #[Service(Service1Configuration::class, 'bar.yml')]
-final class Service1
+final class Service1 implements IService1
 {
 
 }

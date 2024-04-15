@@ -25,22 +25,23 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core\Bricks;
+namespace Archict\Core\Services;
 
-use Archict\Core\Services\ServiceRepresentation;
+use Exception;
 
-/**
- * Representation of what is inside a Brick
- */
-final readonly class BrickRepresentation
+final class ServicesCannotBeLoadedException extends Exception
 {
     /**
-     * @param ServiceRepresentation[] $services
+     * @param string[] $services_names
      */
-    public function __construct(
-        public string $package_name,
-        public string $package_path,
-        public array $services,
-    ) {
+    public function __construct(array $services_names)
+    {
+        $service_list = '';
+        foreach ($services_names as $service_name) {
+            $service_list .= $service_name . ', ';
+        }
+
+        $service_list = rtrim($service_list, ', ');
+        parent::__construct('Some services cannot be loaded: ' . $service_list);
     }
 }

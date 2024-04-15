@@ -25,22 +25,40 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core\Bricks;
+namespace Archict\Core\Services;
 
-use Archict\Core\Services\ServiceRepresentation;
+use Archict\Brick\Service;
+use Archict\Core\Fixtures\brick1\Service1;
+use Archict\Core\Fixtures\ServiceWithDependency;
+use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
-/**
- * Representation of what is inside a Brick
- */
-final readonly class BrickRepresentation
+class LoadServicesTest extends TestCase
 {
-    /**
-     * @param ServiceRepresentation[] $services
-     */
-    public function __construct(
-        public string $package_name,
-        public string $package_path,
-        public array $services,
-    ) {
+    public function testItCanLoadNoServices(): void
+    {
+        self::expectNotToPerformAssertions();
+        (new LoadServices())->loadServicesIntoManager(new ServiceManager(), []);
+    }
+
+    public function testItCanLoadServices(): void
+    {
+        $manager = new ServiceManager();
+        (new LoadServices())->loadServicesIntoManager(
+            $manager,
+            [new ServiceRepresentation(new ReflectionClass(Service1::class), new Service(), null)]
+        );
+
+        self::assertTrue($manager->has(Service1::class));
+    }
+
+    public function testItCannotLoadServicesWithDependencies(): void
+    {
+        $manager = new ServiceManager();
+        self::expectException(ServicesCannotBeLoadedException::class);
+        (new LoadServices())->loadServicesIntoManager(
+            $manager,
+            [new ServiceRepresentation(new ReflectionClass(ServiceWithDependency::class), new Service(), null)]
+        );
     }
 }

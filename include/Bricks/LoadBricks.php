@@ -29,7 +29,7 @@ namespace Archict\Core\Bricks;
 
 use Archict\Brick\Service;
 use Archict\Brick\ServiceConfiguration;
-use Archict\Core\Services\ServiceIntermediateRepresentation;
+use Archict\Core\Services\ServiceRepresentation;
 use Composer\ClassMapGenerator\ClassMapGenerator;
 use Composer\InstalledVersions;
 use ReflectionClass;
@@ -69,7 +69,7 @@ final readonly class LoadBricks implements BricksLoader
     }
 
     /**
-     * @return ServiceIntermediateRepresentation[]
+     * @return ServiceRepresentation[]
      * @throws NotAServiceConfigurationException
      * @throws ReflectionException
      */
@@ -99,7 +99,7 @@ final readonly class LoadBricks implements BricksLoader
                 $configuration_attribute = $configuration_attributes[0]->newInstance();
             }
 
-            $result[] = new ServiceIntermediateRepresentation($reflection, $service_attribute, $configuration_attribute);
+            $result[] = new ServiceRepresentation($reflection, $service_attribute, $configuration_attribute);
         }
 
         return $result;

@@ -25,22 +25,21 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core\Bricks;
+namespace Archict\Core\Services;
 
-use Archict\Core\Services\ServiceRepresentation;
-
-/**
- * Representation of what is inside a Brick
- */
-final readonly class BrickRepresentation
+final class ServicesLoaderStub implements ServicesLoader
 {
-    /**
-     * @param ServiceRepresentation[] $services
-     */
-    public function __construct(
-        public string $package_name,
-        public string $package_path,
-        public array $services,
-    ) {
+    private function __construct()
+    {
+    }
+
+    public static function build(): self
+    {
+        return new self();
+    }
+
+    public function loadServicesIntoManager(ServiceManager $manager, array $services_representation): void
+    {
+        // Do nothing
     }
 }
