@@ -60,6 +60,7 @@ final class ServiceManager
      * @psalm-template S of object
      * @psalm-param class-string<S> $classname
      * @psalm-return ?S
+     * @psalm-suppress InvalidReturnType,InvalidReturnStatement
      */
     public function get(string $classname): ?object
     {

@@ -57,7 +57,7 @@ final readonly class Core
             $services = [...$services, ...$brick->services];
         }
 
-        $this->services_loader->loadServicesIntoManager($this->service_manager, $services);
+        $this->services_loader->loadServicesIntoManager($this->service_manager, array_values($services));
     }
 
     public static function build(): self
