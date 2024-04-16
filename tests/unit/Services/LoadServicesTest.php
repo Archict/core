@@ -52,7 +52,7 @@ class LoadServicesTest extends TestCase
         self::assertTrue($manager->has(Service1::class));
     }
 
-    public function testItCannotLoadServicesWithDependencies(): void
+    public function testItCannotLoadServicesWithNonExistentDependencies(): void
     {
         $manager = new ServiceManager();
         self::expectException(ServicesCannotBeLoadedException::class);
@@ -60,5 +60,20 @@ class LoadServicesTest extends TestCase
             $manager,
             [new ServiceRepresentation(new ReflectionClass(ServiceWithDependency::class), new Service(), null)]
         );
+    }
+
+    public function testItCanLoadServicesWithDependencies(): void
+    {
+        $manager = new ServiceManager();
+        (new LoadServices())->loadServicesIntoManager(
+            $manager,
+            [
+                new ServiceRepresentation(new ReflectionClass(ServiceWithDependency::class), new Service(), null),
+                new ServiceRepresentation(new ReflectionClass(Service1::class), new Service(), null),
+            ]
+        );
+
+        self::assertTrue($manager->has(Service1::class));
+        self::assertTrue($manager->has(ServiceWithDependency::class));
     }
 }

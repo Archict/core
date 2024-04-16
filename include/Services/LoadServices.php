@@ -27,7 +27,9 @@ declare(strict_types=1);
 
 namespace Archict\Core\Services;
 
-use Throwable;
+use ReflectionException;
+use ReflectionNamedType;
+use ReflectionParameter;
 
 /**
  * @internal
@@ -46,13 +48,12 @@ final class LoadServices implements ServicesLoader
             $leftovers   = [];
 
             foreach ($services_to_init as $service) {
-                try {
-                    $reflection = $service->reflection;
-                    $instance   = $reflection->newInstance();
+                $instance = $this->instantiateService($service, $manager);
+                if ($instance === null) {
+                    $leftovers[] = $service;
+                } else {
                     $manager->add($instance);
                     $has_changed = true;
-                } catch (Throwable) {
-                    $leftovers[] = $service;
                 }
             }
 
@@ -67,5 +68,45 @@ final class LoadServices implements ServicesLoader
                 )
             );
         }
+    }
+
+    private function instantiateService(ServiceRepresentation $representation, ServiceManager $manager): ?object
+    {
+        $reflection  = $representation->reflection;
+        $constructor = $reflection->getConstructor();
+        if ($constructor === null) {
+            try {
+                return $reflection->newInstance();
+            } catch (ReflectionException) {
+                return null;
+            }
+        }
+
+        $parameters = $constructor->getParameters();
+        $args       = [];
+        foreach ($parameters as $parameter) {
+            $arg = $this->getParameter($parameter, $manager);
+            if ($arg === null) {
+                return null;
+            }
+
+            $args[] = $arg;
+        }
+
+        try {
+            return $reflection->newInstanceArgs($args);
+        } catch (ReflectionException) {
+            return null;
+        }
+    }
+
+    private function getParameter(ReflectionParameter $parameter, ServiceManager $manager): mixed
+    {
+        $type = $parameter->getType();
+        if (!($type instanceof ReflectionNamedType) || $type->isBuiltin()) {
+            return null;
+        }
+
+        return $manager->get($type->getName()); // @phpstan-ignore-line
     }
 }
