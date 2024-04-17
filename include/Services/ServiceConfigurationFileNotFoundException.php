@@ -27,29 +27,12 @@ declare(strict_types=1);
 
 namespace Archict\Core\Services;
 
-use Archict\Core\Fixtures\brick1\IService1;
-use Archict\Core\Fixtures\brick1\Service1;
-use Archict\Core\Fixtures\brick1\Service1Configuration;
-use PHPUnit\Framework\TestCase;
+use Exception;
 
-final class ServiceManagerTest extends TestCase
+final class ServiceConfigurationFileNotFoundException extends Exception
 {
-    public function testItStoreItself(): void
+    public function __construct(string $service)
     {
-        $manager = new ServiceManager();
-        self::assertTrue($manager->has(ServiceManager::class));
-        self::assertSame($manager, $manager->get(ServiceManager::class));
-    }
-
-    public function testItCanStoreThenRetrieveService(): void
-    {
-        $manager = new ServiceManager();
-        $service = new Service1(new Service1Configuration(0));
-        $manager->add($service);
-
-        self::assertTrue($manager->has(Service1::class));
-        self::assertTrue($manager->has(IService1::class));
-        self::assertSame($service, $manager->get(Service1::class));
-        self::assertSame($service, $manager->get(IService1::class));
+        parent::__construct("Service configuration file for Service '$service' not found.");
     }
 }

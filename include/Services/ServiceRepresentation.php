@@ -28,7 +28,6 @@ declare(strict_types=1);
 namespace Archict\Core\Services;
 
 use Archict\Brick\Service;
-use Archict\Brick\ServiceConfiguration;
 use ReflectionClass;
 
 /**
@@ -39,7 +38,7 @@ final readonly class ServiceRepresentation
     public function __construct(
         public ReflectionClass $reflection,
         public Service $service_attribute,
-        public ?ServiceConfiguration $service_configuration,
+        public string $package_path,
     ) {
     }
 }

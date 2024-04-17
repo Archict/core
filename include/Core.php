@@ -32,6 +32,7 @@ use Archict\Core\Bricks\LoadBricks;
 use Archict\Core\Services\LoadServices;
 use Archict\Core\Services\ServiceManager;
 use Archict\Core\Services\ServicesLoader;
+use CuyZ\Valinor\MapperBuilder;
 
 /**
  * Core of library ;)
@@ -62,6 +63,11 @@ final readonly class Core
 
     public static function build(): self
     {
-        return new self(new LoadBricks(), new LoadServices());
+        return new self(
+            new LoadBricks(),
+            new LoadServices(
+                (new MapperBuilder())->allowPermissiveTypes()->mapper()
+            )
+        );
     }
 }

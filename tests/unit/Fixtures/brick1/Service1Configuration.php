@@ -30,7 +30,10 @@ namespace Archict\Core\Fixtures\brick1;
 use Archict\Brick\ServiceConfiguration;
 
 #[ServiceConfiguration]
-final class Service1Configuration
+final readonly class Service1Configuration
 {
-
+    public function __construct(
+        public int $nb_workers,
+    ) {
+    }
 }

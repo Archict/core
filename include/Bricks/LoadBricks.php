@@ -99,7 +99,7 @@ final readonly class LoadBricks implements BricksLoader
                 $configuration_attribute = $configuration_attributes[0]->newInstance();
             }
 
-            $result[] = new ServiceRepresentation($reflection, $service_attribute, $configuration_attribute);
+            $result[] = new ServiceRepresentation($reflection, $service_attribute, $package_path);
         }
 
         return $result;

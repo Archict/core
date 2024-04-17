@@ -84,6 +84,5 @@ class LoadBricksTest extends TestCase
         self::assertSame(Service1::class, $service->reflection->name);
         self::assertSame('bar.yml', $service->service_attribute->configuration_filename);
         self::assertSame(Service1Configuration::class, $service->service_attribute->configuration_classname);
-        self::assertNotNull($service->service_configuration);
     }
 }

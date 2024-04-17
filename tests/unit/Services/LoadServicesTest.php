@@ -29,24 +29,47 @@ namespace Archict\Core\Services;
 
 use Archict\Brick\Service;
 use Archict\Core\Fixtures\brick1\Service1;
+use Archict\Core\Fixtures\brick1\Service1Configuration;
 use Archict\Core\Fixtures\ServiceWithDependency;
+use CuyZ\Valinor\Mapper\TreeMapper;
+use CuyZ\Valinor\MapperBuilder;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
 class LoadServicesTest extends TestCase
 {
+    private const PACKAGE_DIR = __DIR__ . '/../Fixtures/brick1';
+    private TreeMapper $mapper;
+    private ServiceRepresentation $service1;
+    private ServiceRepresentation $service_with_dependency;
+
+    protected function setUp(): void
+    {
+        $this->mapper                  = (new MapperBuilder())->allowPermissiveTypes()->mapper();
+        $this->service1                = new ServiceRepresentation(
+            new ReflectionClass(Service1::class),
+            new Service(Service1Configuration::class, 'bar.yml'),
+            self::PACKAGE_DIR,
+        );
+        $this->service_with_dependency = new ServiceRepresentation(
+            new ReflectionClass(ServiceWithDependency::class),
+            new Service(),
+            self::PACKAGE_DIR,
+        );
+    }
+
     public function testItCanLoadNoServices(): void
     {
         self::expectNotToPerformAssertions();
-        (new LoadServices())->loadServicesIntoManager(new ServiceManager(), []);
+        (new LoadServices($this->mapper))->loadServicesIntoManager(new ServiceManager(), []);
     }
 
     public function testItCanLoadServices(): void
     {
         $manager = new ServiceManager();
-        (new LoadServices())->loadServicesIntoManager(
+        (new LoadServices($this->mapper))->loadServicesIntoManager(
             $manager,
-            [new ServiceRepresentation(new ReflectionClass(Service1::class), new Service(), null)]
+            [$this->service1]
         );
 
         self::assertTrue($manager->has(Service1::class));
@@ -56,21 +79,18 @@ class LoadServicesTest extends TestCase
     {
         $manager = new ServiceManager();
         self::expectException(ServicesCannotBeLoadedException::class);
-        (new LoadServices())->loadServicesIntoManager(
+        (new LoadServices($this->mapper))->loadServicesIntoManager(
             $manager,
-            [new ServiceRepresentation(new ReflectionClass(ServiceWithDependency::class), new Service(), null)]
+            [$this->service_with_dependency]
         );
     }
 
     public function testItCanLoadServicesWithDependencies(): void
     {
         $manager = new ServiceManager();
-        (new LoadServices())->loadServicesIntoManager(
+        (new LoadServices($this->mapper))->loadServicesIntoManager(
             $manager,
-            [
-                new ServiceRepresentation(new ReflectionClass(ServiceWithDependency::class), new Service(), null),
-                new ServiceRepresentation(new ReflectionClass(Service1::class), new Service(), null),
-            ]
+            [$this->service1, $this->service_with_dependency]
         );
 
         self::assertTrue($manager->has(Service1::class));
