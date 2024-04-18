@@ -28,7 +28,6 @@ declare(strict_types=1);
 namespace Archict\Core\Bricks;
 
 use Archict\Brick\Service;
-use Archict\Brick\ServiceConfiguration;
 use Archict\Core\Services\ServiceRepresentation;
 use Composer\ClassMapGenerator\ClassMapGenerator;
 use Composer\InstalledVersions;
@@ -41,7 +40,6 @@ use ReflectionException;
 final readonly class LoadBricks implements BricksLoader
 {
     /**
-     * @throws NotAServiceConfigurationException
      * @throws ReflectionException
      */
     public function loadInstalledBricks(): array
@@ -70,7 +68,6 @@ final readonly class LoadBricks implements BricksLoader
 
     /**
      * @return ServiceRepresentation[]
-     * @throws NotAServiceConfigurationException
      * @throws ReflectionException
      */
     private function loadServicesOfPackage(string $package_path): array
@@ -86,20 +83,8 @@ final readonly class LoadBricks implements BricksLoader
                 continue;
             }
 
-            $service_attribute       = $attributes[0]->newInstance();
-            $configuration_attribute = null;
-            if ($service_attribute->configuration_classname !== null) {
-                $configuration_reflection = new ReflectionClass($service_attribute->configuration_classname);
-
-                $configuration_attributes = $configuration_reflection->getAttributes(ServiceConfiguration::class);
-                if (empty($configuration_attributes)) {
-                    throw new NotAServiceConfigurationException($service_attribute->configuration_classname, $reflection->name);
-                }
-
-                $configuration_attribute = $configuration_attributes[0]->newInstance();
-            }
-
-            $result[] = new ServiceRepresentation($reflection, $service_attribute, $package_path);
+            $service_attribute = $attributes[0]->newInstance();
+            $result[]          = new ServiceRepresentation($reflection, $service_attribute, $package_path);
         }
 
         return $result;

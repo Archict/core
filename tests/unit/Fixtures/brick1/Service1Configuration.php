@@ -27,9 +27,6 @@ declare(strict_types=1);
 
 namespace Archict\Core\Fixtures\brick1;
 
-use Archict\Brick\ServiceConfiguration;
-
-#[ServiceConfiguration]
 final readonly class Service1Configuration
 {
     public function __construct(

@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3cfb2c60d798831db8c01c85f736b9ab",
+    "content-hash": "c447785e50b96fb3c5e89b43240adc7c",
     "packages": [
         {
             "name": "archict/brick",
-            "version": "v0.1.0",
+            "version": "v0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Archict/brick.git",
-                "reference": "d0b4581b1b92d11427dcd332c4f65711fda5e966"
+                "reference": "442e7230807bd55f1cd0ef8abf1b36272967ec77"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Archict/brick/zipball/d0b4581b1b92d11427dcd332c4f65711fda5e966",
-                "reference": "d0b4581b1b92d11427dcd332c4f65711fda5e966",
+                "url": "https://api.github.com/repos/Archict/brick/zipball/442e7230807bd55f1cd0ef8abf1b36272967ec77",
+                "reference": "442e7230807bd55f1cd0ef8abf1b36272967ec77",
                 "shasum": ""
             },
             "require": {
@@ -42,9 +42,9 @@
             "description": "Base library for Archict framework",
             "support": {
                 "issues": "https://github.com/Archict/brick/issues",
-                "source": "https://github.com/Archict/brick/tree/v0.1.0"
+                "source": "https://github.com/Archict/brick/tree/v0.2.0"
             },
-            "time": "2024-04-12T15:48:26+00:00"
+            "time": "2024-04-18T16:07:42+00:00"
         },
         {
             "name": "azjezz/psl",
@@ -4318,5 +4318,5 @@
         "composer-runtime-api": "^2.2"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.2.0"
 }
