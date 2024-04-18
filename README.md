@@ -1,5 +1,7 @@
 # Archict/core
 
+[![Tests](https://github.com/Archict/core/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/Archict/core/actions/workflows/tests.yml)
+
 > In the Land of PHP where the Shadows lie.
 >
 > One Brick to rule them all, One Brick to find them,
