@@ -27,7 +27,7 @@ declare(strict_types=1);
 
 namespace Archict\Core\Fixtures;
 
-use Archict\Core\Fixtures\brick1\Service1;
+use Archict\Core\Fixtures\brick1\src\Service1;
 
 final readonly class ServiceWithDependency
 {

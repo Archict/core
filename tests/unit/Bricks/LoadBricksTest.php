@@ -27,8 +27,8 @@ declare(strict_types=1);
 
 namespace Archict\Core\Bricks;
 
-use Archict\Core\Fixtures\brick1\Service1;
-use Archict\Core\Fixtures\brick1\Service1Configuration;
+use Archict\Core\Fixtures\brick1\src\Service1;
+use Archict\Core\Fixtures\brick1\src\Service1Configuration;
 use Composer\InstalledVersions;
 use PHPUnit\Framework\TestCase;
 

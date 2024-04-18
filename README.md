@@ -31,3 +31,5 @@ $dispatcher->dispatch(new MyEvent());
 ```
 
 That's all!
+
+Please note that if your package is also a Brick, it will scan only `src` and `include` directory for Services.

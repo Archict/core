@@ -32,16 +32,13 @@ use Archict\Core\Services\ServiceRepresentation;
 use Composer\ClassMapGenerator\ClassMapGenerator;
 use Composer\InstalledVersions;
 use ReflectionClass;
-use ReflectionException;
+use Throwable;
 
 /**
  * @internal
  */
 final readonly class LoadBricks implements BricksLoader
 {
-    /**
-     * @throws ReflectionException
-     */
     public function loadInstalledBricks(): array
     {
         $packages = array_unique(InstalledVersions::getInstalledPackagesByType(self::PACKAGE_TYPE));
@@ -64,12 +61,11 @@ final readonly class LoadBricks implements BricksLoader
 
     /**
      * @return ServiceRepresentation[]
-     * @throws ReflectionException
      */
     private function loadServicesOfPackage(string $package_path): array
     {
         $result = [];
-        $map    = ClassMapGenerator::createMap($package_path);
+        $map    = $this->getClassMapForPackage($package_path);
         foreach ($map as $symbol => $_path) {
             $reflection = new ReflectionClass($symbol);
 
@@ -84,5 +80,23 @@ final readonly class LoadBricks implements BricksLoader
         }
 
         return $result;
+    }
+
+    /**
+     * @return array<class-string, non-empty-string>
+     */
+    private function getClassMapForPackage(string $package_path): array
+    {
+        $generator   = new ClassMapGenerator();
+        $path_to_try = ['src', 'include'];
+        foreach ($path_to_try as $path) {
+            try {
+                $generator->scanPaths($package_path . '/' . $path);
+            } catch (Throwable) { // phpcs:ignore
+                // Ignore it
+            }
+        }
+
+        return $generator->getClassMap()->getMap();
     }
 }

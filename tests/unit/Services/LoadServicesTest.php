@@ -28,8 +28,8 @@ declare(strict_types=1);
 namespace Archict\Core\Services;
 
 use Archict\Brick\Service;
-use Archict\Core\Fixtures\brick1\Service1;
-use Archict\Core\Fixtures\brick1\Service1Configuration;
+use Archict\Core\Fixtures\brick1\src\Service1;
+use Archict\Core\Fixtures\brick1\src\Service1Configuration;
 use Archict\Core\Fixtures\ServiceWithDependency;
 use CuyZ\Valinor\Mapper\TreeMapper;
 use CuyZ\Valinor\MapperBuilder;

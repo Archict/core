@@ -27,7 +27,7 @@ declare(strict_types=1);
 
 namespace Archict\Core\Event;
 
-use Archict\Core\Fixtures\brick1\MyEvent;
+use Archict\Core\Fixtures\brick1\src\MyEvent;
 use Archict\Core\Services\ServiceManager;
 use PHPUnit\Framework\TestCase;
 
