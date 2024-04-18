@@ -25,8 +25,12 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core\Fixtures\brick1;
+namespace Archict\Core\Fixtures\brick1\src;
 
-interface IService1
+final readonly class Service1Configuration
 {
+    public function __construct(
+        public int $nb_workers,
+    ) {
+    }
 }

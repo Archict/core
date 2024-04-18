@@ -25,10 +25,8 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core\Fixtures\brick1;
+namespace Archict\Core\Fixtures\brick1\src;
 
-final class MyEvent
+interface IService1
 {
-    public bool $listened   = false;
-    public int $nb_listened = 0;
 }

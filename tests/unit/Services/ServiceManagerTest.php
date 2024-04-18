@@ -27,9 +27,9 @@ declare(strict_types=1);
 
 namespace Archict\Core\Services;
 
-use Archict\Core\Fixtures\brick1\IService1;
-use Archict\Core\Fixtures\brick1\Service1;
-use Archict\Core\Fixtures\brick1\Service1Configuration;
+use Archict\Core\Fixtures\brick1\src\IService1;
+use Archict\Core\Fixtures\brick1\src\Service1;
+use Archict\Core\Fixtures\brick1\src\Service1Configuration;
 use PHPUnit\Framework\TestCase;
 
 final class ServiceManagerTest extends TestCase

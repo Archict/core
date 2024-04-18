@@ -25,7 +25,7 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core\Fixtures\brick1;
+namespace Archict\Core\Fixtures\brick1\src;
 
 use Archict\Brick\ListeningEvent;
 use Archict\Brick\Service;

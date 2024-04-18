@@ -25,12 +25,9 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core\Fixtures\brick1;
+namespace Archict\Core\Fixtures\brick1\src;
 
-final readonly class Service1Configuration
+final class SomeClass
 {
-    public function __construct(
-        public int $nb_workers,
-    ) {
-    }
+
 }
