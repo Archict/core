@@ -11,7 +11,7 @@
     "require": {
         "php": ">= 8.2",
         "composer-runtime-api": "^2.2",
-        "archict/brick": "^0.1.0",
+        "archict/brick": "^0",
         "composer/class-map-generator": "^1.1",
         "azjezz/psl": "^2.9",
         "cuyz/valinor": "^1.12",
