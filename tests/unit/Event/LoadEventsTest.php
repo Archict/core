@@ -29,6 +29,7 @@ namespace Archict\Core\Event;
 
 use Archict\Brick\Service;
 use Archict\Core\Fixtures\brick1\Service1;
+use Archict\Core\Services\ServiceManager;
 use Archict\Core\Services\ServiceRepresentation;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -40,7 +41,7 @@ final class LoadEventsTest extends TestCase
         $loader = new LoadEvents();
         self::expectNotToPerformAssertions();
         $loader->loadEventsListeners(
-            new EventManager(),
+            new EventManager(new ServiceManager()),
             [new ServiceRepresentation(new ReflectionClass(Service1::class), new Service(), '')]
         );
     }

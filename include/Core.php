@@ -53,7 +53,7 @@ final readonly class Core
         private EventsLoader $events_loader,
     ) {
         $this->service_manager = new ServiceManager();
-        $this->event_manager   = new EventManager();
+        $this->event_manager   = new EventManager($this->service_manager);
         $this->service_manager->add($this->event_manager);
     }
 

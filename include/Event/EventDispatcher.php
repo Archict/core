@@ -25,10 +25,17 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core\Fixtures\brick1;
+namespace Archict\Core\Event;
 
-final class MyEvent
+/**
+ * Allow you to dispatch event
+ */
+interface EventDispatcher
 {
-    public bool $listened   = false;
-    public int $nb_listened = 0;
+    /**
+     * @template E of object
+     * @param E $event
+     * @return E
+     */
+    public function dispatch(mixed $event): mixed;
 }

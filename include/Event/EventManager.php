@@ -27,15 +27,22 @@ declare(strict_types=1);
 
 namespace Archict\Core\Event;
 
+use Archict\Core\Services\ServiceManager;
+
 /**
  * @internal
  */
-final class EventManager
+final class EventManager implements EventDispatcher
 {
     /**
      * @var array<class-string, array<class-string, string>>
      */
     private array $listeners = [];
+
+    public function __construct(
+        private readonly ServiceManager $service_manager,
+    ) {
+    }
 
     /**
      * @param class-string $event
@@ -48,5 +55,19 @@ final class EventManager
         }
 
         $this->listeners[$event][$service] = $method;
+    }
+
+    public function dispatch(mixed $event): mixed
+    {
+        if (isset($this->listeners[$event::class])) {
+            foreach ($this->listeners[$event::class] as $service => $method) {
+                $service_instance = $this->service_manager->get($service);
+                if ($service_instance) {
+                    $service_instance->{$method}($event);
+                }
+            }
+        }
+
+        return $event;
     }
 }
