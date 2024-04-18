@@ -25,19 +25,14 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core;
+namespace Archict\Core\Event;
 
-use Archict\Core\Bricks\BricksLoaderStub;
-use Archict\Core\Event\EventsLoaderStub;
-use Archict\Core\Services\ServicesLoaderStub;
-use PHPUnit\Framework\TestCase;
+use Exception;
 
-class CoreTest extends TestCase
+final class EventListenerMissingEventTypeException extends Exception
 {
-    public function testItDoesntThrow(): void
+    public function __construct(string $service, string $method)
     {
-        self::expectNotToPerformAssertions();
-        $core = new Core(BricksLoaderStub::build(), ServicesLoaderStub::build(), EventsLoaderStub::build());
-        $core->load();
+        parent::__construct("Event listener $service::$method doesn't specify which Event it listen.");
     }
 }

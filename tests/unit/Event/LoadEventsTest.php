@@ -25,19 +25,23 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core;
+namespace Archict\Core\Event;
 
-use Archict\Core\Bricks\BricksLoaderStub;
-use Archict\Core\Event\EventsLoaderStub;
-use Archict\Core\Services\ServicesLoaderStub;
+use Archict\Brick\Service;
+use Archict\Core\Fixtures\brick1\Service1;
+use Archict\Core\Services\ServiceRepresentation;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
-class CoreTest extends TestCase
+final class LoadEventsTest extends TestCase
 {
-    public function testItDoesntThrow(): void
+    public function testItCanLoadEvents(): void
     {
+        $loader = new LoadEvents();
         self::expectNotToPerformAssertions();
-        $core = new Core(BricksLoaderStub::build(), ServicesLoaderStub::build(), EventsLoaderStub::build());
-        $core->load();
+        $loader->loadEventsListeners(
+            new EventManager(),
+            [new ServiceRepresentation(new ReflectionClass(Service1::class), new Service(), '')]
+        );
     }
 }

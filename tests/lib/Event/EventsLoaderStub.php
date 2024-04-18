@@ -25,19 +25,21 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core;
+namespace Archict\Core\Event;
 
-use Archict\Core\Bricks\BricksLoaderStub;
-use Archict\Core\Event\EventsLoaderStub;
-use Archict\Core\Services\ServicesLoaderStub;
-use PHPUnit\Framework\TestCase;
-
-class CoreTest extends TestCase
+final class EventsLoaderStub implements EventsLoader
 {
-    public function testItDoesntThrow(): void
+    private function __construct()
     {
-        self::expectNotToPerformAssertions();
-        $core = new Core(BricksLoaderStub::build(), ServicesLoaderStub::build(), EventsLoaderStub::build());
-        $core->load();
+    }
+
+    public static function build(): self
+    {
+        return new self();
+    }
+
+    public function loadEventsListeners(EventManager $event_manager, array $services_representation): void
+    {
+        // Do nothing
     }
 }

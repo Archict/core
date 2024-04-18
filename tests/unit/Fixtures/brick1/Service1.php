@@ -27,6 +27,7 @@ declare(strict_types=1);
 
 namespace Archict\Core\Fixtures\brick1;
 
+use Archict\Brick\ListeningEvent;
 use Archict\Brick\Service;
 
 #[Service(Service1Configuration::class, 'bar.yml')]
@@ -35,5 +36,11 @@ final readonly class Service1 implements IService1
     public function __construct(
         public Service1Configuration $configuration,
     ) {
+    }
+
+    #[ListeningEvent]
+    public function listenToAnEvent(MyEvent $event): void
+    {
+        // Do nothing
     }
 }
