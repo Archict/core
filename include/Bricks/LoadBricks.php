@@ -44,11 +44,7 @@ final readonly class LoadBricks implements BricksLoader
      */
     public function loadInstalledBricks(): array
     {
-        $self_name = InstalledVersions::getRootPackage()['name'];
-        $packages  = array_filter(
-            array_unique(InstalledVersions::getInstalledPackagesByType(self::PACKAGE_TYPE)),
-            static fn(string $package) => $package !== $self_name
-        );
+        $packages = array_unique(InstalledVersions::getInstalledPackagesByType(self::PACKAGE_TYPE));
 
         $result = [];
         foreach ($packages as $package_name) {
