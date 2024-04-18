@@ -44,7 +44,7 @@ use CuyZ\Valinor\MapperBuilder;
  */
 final readonly class Core
 {
-    private ServiceManager $service_manager;
+    public ServiceManager $service_manager;
     private EventManager $event_manager;
 
     public function __construct(
