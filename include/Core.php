@@ -29,6 +29,9 @@ namespace Archict\Core;
 
 use Archict\Core\Bricks\BricksLoader;
 use Archict\Core\Bricks\LoadBricks;
+use Archict\Core\Event\EventManager;
+use Archict\Core\Event\EventsLoader;
+use Archict\Core\Event\LoadEvents;
 use Archict\Core\Services\LoadServices;
 use Archict\Core\Services\ServiceManager;
 use Archict\Core\Services\ServicesLoader;
@@ -42,12 +45,16 @@ use CuyZ\Valinor\MapperBuilder;
 final readonly class Core
 {
     private ServiceManager $service_manager;
+    private EventManager $event_manager;
 
     public function __construct(
         private BricksLoader $brick_loader,
         private ServicesLoader $services_loader,
+        private EventsLoader $events_loader,
     ) {
         $this->service_manager = new ServiceManager();
+        $this->event_manager   = new EventManager($this->service_manager);
+        $this->service_manager->add($this->event_manager);
     }
 
     public function load(): void
@@ -59,6 +66,7 @@ final readonly class Core
         }
 
         $this->services_loader->loadServicesIntoManager($this->service_manager, array_values($services));
+        $this->events_loader->loadEventsListeners($this->event_manager, array_values($services));
     }
 
     public static function build(): self
@@ -67,7 +75,8 @@ final readonly class Core
             new LoadBricks(),
             new LoadServices(
                 (new MapperBuilder())->allowPermissiveTypes()->mapper()
-            )
+            ),
+            new LoadEvents(),
         );
     }
 }

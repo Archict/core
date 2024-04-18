@@ -25,19 +25,49 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core;
+namespace Archict\Core\Event;
 
-use Archict\Core\Bricks\BricksLoaderStub;
-use Archict\Core\Event\EventsLoaderStub;
-use Archict\Core\Services\ServicesLoaderStub;
-use PHPUnit\Framework\TestCase;
+use Archict\Core\Services\ServiceManager;
 
-class CoreTest extends TestCase
+/**
+ * @internal
+ */
+final class EventManager implements EventDispatcher
 {
-    public function testItDoesntThrow(): void
+    /**
+     * @var array<class-string, array<class-string, string>>
+     */
+    private array $listeners = [];
+
+    public function __construct(
+        private readonly ServiceManager $service_manager,
+    ) {
+    }
+
+    /**
+     * @param class-string $event
+     * @param class-string $service
+     */
+    public function addListener(string $event, string $service, string $method): void
     {
-        self::expectNotToPerformAssertions();
-        $core = new Core(BricksLoaderStub::build(), ServicesLoaderStub::build(), EventsLoaderStub::build());
-        $core->load();
+        if (!isset($this->listeners[$event])) {
+            $this->listeners[$event] = [];
+        }
+
+        $this->listeners[$event][$service] = $method;
+    }
+
+    public function dispatch(mixed $event): mixed
+    {
+        if (isset($this->listeners[$event::class])) {
+            foreach ($this->listeners[$event::class] as $service => $method) {
+                $service_instance = $this->service_manager->get($service);
+                if ($service_instance) {
+                    $service_instance->{$method}($event);
+                }
+            }
+        }
+
+        return $event;
     }
 }

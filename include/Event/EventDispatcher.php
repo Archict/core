@@ -25,19 +25,17 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core;
+namespace Archict\Core\Event;
 
-use Archict\Core\Bricks\BricksLoaderStub;
-use Archict\Core\Event\EventsLoaderStub;
-use Archict\Core\Services\ServicesLoaderStub;
-use PHPUnit\Framework\TestCase;
-
-class CoreTest extends TestCase
+/**
+ * Allow you to dispatch event
+ */
+interface EventDispatcher
 {
-    public function testItDoesntThrow(): void
-    {
-        self::expectNotToPerformAssertions();
-        $core = new Core(BricksLoaderStub::build(), ServicesLoaderStub::build(), EventsLoaderStub::build());
-        $core->load();
-    }
+    /**
+     * @template E of object
+     * @param E $event
+     * @return E
+     */
+    public function dispatch(mixed $event): mixed;
 }
