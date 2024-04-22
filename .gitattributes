@@ -3,3 +3,4 @@
 /psalm.xml export-ignore
 /phpstan.neon export-ignore
 /phpcs.xml export-ignore
+.env export-ignore

@@ -25,30 +25,29 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core;
+namespace Archict\Core\Env;
 
-use Archict\Core\Bricks\BricksLoaderStub;
-use Archict\Core\Env\EnvironmentService;
-use Archict\Core\Event\EventDispatcher;
-use Archict\Core\Event\EventsLoaderStub;
-use Archict\Core\Services\ServicesLoaderStub;
-use PHPUnit\Framework\TestCase;
+use Composer\InstalledVersions;
+use Dotenv\Dotenv;
 
-class CoreTest extends TestCase
+/**
+ * @internal
+ */
+final class Environment implements EnvironmentService
 {
-    public function testItDoesntThrow(): void
+    public function __construct()
     {
-        self::expectNotToPerformAssertions();
-        $core = new Core(BricksLoaderStub::build(), ServicesLoaderStub::build(), EventsLoaderStub::build());
-        $core->load();
+        $root_dir = InstalledVersions::getRootPackage()['install_path'];
+        Dotenv::createImmutable($root_dir)->safeLoad();
     }
 
-    public function testItHasSomeServices(): void
+    public function has(string $key): bool
     {
-        $core     = new Core(BricksLoaderStub::build(), ServicesLoaderStub::build(), EventsLoaderStub::build());
-        $services = $core->service_manager;
+        return isset($_ENV[$key]);
+    }
 
-        self::assertTrue($services->has(EventDispatcher::class));
-        self::assertTrue($services->has(EnvironmentService::class));
+    public function get(string $key): null|string|float|int|bool
+    {
+        return $_ENV[$key];
     }
 }

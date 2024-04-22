@@ -25,30 +25,14 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core;
+namespace Archict\Core\Env;
 
-use Archict\Core\Bricks\BricksLoaderStub;
-use Archict\Core\Env\EnvironmentService;
-use Archict\Core\Event\EventDispatcher;
-use Archict\Core\Event\EventsLoaderStub;
-use Archict\Core\Services\ServicesLoaderStub;
-use PHPUnit\Framework\TestCase;
-
-class CoreTest extends TestCase
+interface EnvironmentService
 {
-    public function testItDoesntThrow(): void
-    {
-        self::expectNotToPerformAssertions();
-        $core = new Core(BricksLoaderStub::build(), ServicesLoaderStub::build(), EventsLoaderStub::build());
-        $core->load();
-    }
+    public function has(string $key): bool;
 
-    public function testItHasSomeServices(): void
-    {
-        $core     = new Core(BricksLoaderStub::build(), ServicesLoaderStub::build(), EventsLoaderStub::build());
-        $services = $core->service_manager;
-
-        self::assertTrue($services->has(EventDispatcher::class));
-        self::assertTrue($services->has(EnvironmentService::class));
-    }
+    /**
+     * @param non-empty-string $key
+     */
+    public function get(string $key): float|bool|int|string|null;
 }

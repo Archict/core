@@ -25,30 +25,20 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core;
+namespace Archict\Core\Env;
 
-use Archict\Core\Bricks\BricksLoaderStub;
-use Archict\Core\Env\EnvironmentService;
-use Archict\Core\Event\EventDispatcher;
-use Archict\Core\Event\EventsLoaderStub;
-use Archict\Core\Services\ServicesLoaderStub;
 use PHPUnit\Framework\TestCase;
 
-class CoreTest extends TestCase
+final class EnvironmentTest extends TestCase
 {
-    public function testItDoesntThrow(): void
+    public function testItLoadDotEnv(): void
     {
-        self::expectNotToPerformAssertions();
-        $core = new Core(BricksLoaderStub::build(), ServicesLoaderStub::build(), EventsLoaderStub::build());
-        $core->load();
-    }
+        $environment = new Environment();
 
-    public function testItHasSomeServices(): void
-    {
-        $core     = new Core(BricksLoaderStub::build(), ServicesLoaderStub::build(), EventsLoaderStub::build());
-        $services = $core->service_manager;
-
-        self::assertTrue($services->has(EventDispatcher::class));
-        self::assertTrue($services->has(EnvironmentService::class));
+        self::assertSame("hello", $environment->get('VAR_1'));
+        self::assertSame("hello world!", $environment->get('VAR_2'));
+        self::assertSame(4, (int) $environment->get('INT_VAR'));
+        self::assertSame(3.5, (float) $environment->get('FLOAT_VAR'));
+        self::assertSame(true, (bool) $environment->get('BOOL_VAR'));
     }
 }
