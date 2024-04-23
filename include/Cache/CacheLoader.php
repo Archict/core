@@ -25,33 +25,18 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core\Env;
+namespace Archict\Core\Cache;
 
-use Composer\InstalledVersions;
-use Dotenv\Dotenv;
+use Archict\Core\Env\EnvironmentService;
+use Psr\SimpleCache\CacheInterface;
 
-/**
- * @internal
- */
-final class Environment implements EnvironmentService
+final class CacheLoader
 {
-    public function __construct()
+    public static function loadCache(EnvironmentService $environment): CacheInterface
     {
-        $root_dir = InstalledVersions::getRootPackage()['install_path'];
-        Dotenv::createImmutable($root_dir)->safeLoad();
-    }
-
-    public function has(string $key): bool
-    {
-        return isset($_ENV[$key]);
-    }
-
-    public function get(string $key, float|bool|int|string|null $default = null): float|bool|int|string|null
-    {
-        if (isset($_ENV[$key])) {
-            return $_ENV[$key];
-        }
-
-        return $default;
+        return match ((string) $environment->get('MODE', 'PROD')) {
+            'DEV'   => new MemoryCache(),
+            default => new NoopCache(),
+        };
     }
 }

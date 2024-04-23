@@ -27,31 +27,36 @@ declare(strict_types=1);
 
 namespace Archict\Core\Env;
 
-use Composer\InstalledVersions;
-use Dotenv\Dotenv;
-
-/**
- * @internal
- */
-final class Environment implements EnvironmentService
+final readonly class EnvironmentServiceStub implements EnvironmentService
 {
-    public function __construct()
+    /**
+     * @param array<string, float|bool|int|string> $env
+     */
+    private function __construct(
+        private array $env,
+    ) {
+    }
+
+    public static function buildEmpty(): self
     {
-        $root_dir = InstalledVersions::getRootPackage()['install_path'];
-        Dotenv::createImmutable($root_dir)->safeLoad();
+        return new self([]);
+    }
+
+    /**
+     * @param array<string, float|bool|int|string> $env
+     */
+    public static function buildWith(array $env): self
+    {
+        return new self($env);
     }
 
     public function has(string $key): bool
     {
-        return isset($_ENV[$key]);
+        return isset($this->env[$key]);
     }
 
     public function get(string $key, float|bool|int|string|null $default = null): float|bool|int|string|null
     {
-        if (isset($_ENV[$key])) {
-            return $_ENV[$key];
-        }
-
-        return $default;
+        return $this->env[$key] ?? $default;
     }
 }

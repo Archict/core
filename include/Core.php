@@ -29,6 +29,7 @@ namespace Archict\Core;
 
 use Archict\Core\Bricks\BricksLoader;
 use Archict\Core\Bricks\LoadBricks;
+use Archict\Core\Cache\CacheLoader;
 use Archict\Core\Env\Environment;
 use Archict\Core\Event\EventManager;
 use Archict\Core\Event\EventsLoader;
@@ -55,8 +56,10 @@ final readonly class Core
     ) {
         $this->service_manager = new ServiceManager();
         $this->event_manager   = new EventManager($this->service_manager);
+        $environment           = new Environment();
         $this->service_manager->add($this->event_manager);
-        $this->service_manager->add(new Environment());
+        $this->service_manager->add($environment);
+        $this->service_manager->add(CacheLoader::loadCache($environment));
     }
 
     public function load(): void

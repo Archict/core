@@ -25,33 +25,59 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core\Env;
+namespace Archict\Core\Cache;
 
-use Composer\InstalledVersions;
-use Dotenv\Dotenv;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @internal
- */
-final class Environment implements EnvironmentService
+class NoopCacheTest extends TestCase
 {
-    public function __construct()
+    private NoopCache $cache;
+
+    protected function setUp(): void
     {
-        $root_dir = InstalledVersions::getRootPackage()['install_path'];
-        Dotenv::createImmutable($root_dir)->safeLoad();
+        $this->cache = new NoopCache();
     }
 
-    public function has(string $key): bool
+    public function testSetMultiple(): void
     {
-        return isset($_ENV[$key]);
+        self::assertFalse($this->cache->setMultiple(['foo' => 'bar']));
     }
 
-    public function get(string $key, float|bool|int|string|null $default = null): float|bool|int|string|null
+    public function testDeleteMultiple(): void
     {
-        if (isset($_ENV[$key])) {
-            return $_ENV[$key];
+        self::assertFalse($this->cache->deleteMultiple(['foo']));
+    }
+
+    public function testGet(): void
+    {
+        self::assertNull($this->cache->get('foo'));
+    }
+
+    public function testGetMultiple(): void
+    {
+        $iter = $this->cache->getMultiple(['foo', 'bar']);
+        foreach ($iter as $item) {
+            self::assertNull($item);
         }
+    }
 
-        return $default;
+    public function testDelete(): void
+    {
+        self::assertFalse($this->cache->delete('foo'));
+    }
+
+    public function testSet(): void
+    {
+        self::assertFalse($this->cache->set('foo', 'bar'));
+    }
+
+    public function testClear(): void
+    {
+        self::assertFalse($this->cache->clear());
+    }
+
+    public function testHas(): void
+    {
+        self::assertFalse($this->cache->has('foo'));
     }
 }

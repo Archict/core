@@ -34,5 +34,5 @@ interface EnvironmentService
     /**
      * @param non-empty-string $key
      */
-    public function get(string $key): float|bool|int|string|null;
+    public function get(string $key, float|bool|int|string|null $default = null): float|bool|int|string|null;
 }
