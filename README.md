@@ -33,3 +33,18 @@ $dispatcher->dispatch(new MyEvent());
 That's all!
 
 Please note that if your package is also a Brick, it will scan only `src` and `include` directory for Services.
+
+## Supplied Services
+
+**ServiceManager**
+
+With `ServiceManager::get(class-string)` you can retrieve any Service. But it's better if you use automatic Service
+injection in your own Service constructor.
+
+**EventDispatcher**
+
+With `EventDispatcher::dispatch(mixed)` you can dispatch an Event to all its listeners.
+
+**CacheInterface**
+
+Implementation of [PSR-16](https://www.php-fig.org/psr/psr-16/) cache system.

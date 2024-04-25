@@ -25,33 +25,26 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core\Env;
+namespace Archict\Core\Cache;
 
-use Composer\InstalledVersions;
-use Dotenv\Dotenv;
+use Archict\Core\Env\EnvironmentServiceStub;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @internal
- */
-final class Environment implements EnvironmentService
+final class CacheLoaderTest extends TestCase
 {
-    public function __construct()
+    public function testItReturnsNoopCache(): void
     {
-        $root_dir = InstalledVersions::getRootPackage()['install_path'];
-        Dotenv::createImmutable($root_dir)->safeLoad();
+        self::assertInstanceOf(NoopCache::class, CacheLoader::loadCache(EnvironmentServiceStub::buildWith(['MODE' => 'something'])));
     }
 
-    public function has(string $key): bool
+    public function testItReturnsMemoryCache(): void
     {
-        return isset($_ENV[$key]);
+        self::assertInstanceOf(MemoryCache::class, CacheLoader::loadCache(EnvironmentServiceStub::buildWith(['MODE' => 'DEV'])));
     }
 
-    public function get(string $key, float|bool|int|string|null $default = null): float|bool|int|string|null
+    public function testItReturnsFileSystemCache(): void
     {
-        if (isset($_ENV[$key])) {
-            return $_ENV[$key];
-        }
-
-        return $default;
+        self::assertInstanceOf(FileSystemCache::class, CacheLoader::loadCache(EnvironmentServiceStub::buildWith(['MODE' => 'PROD'])));
+        self::assertInstanceOf(FileSystemCache::class, CacheLoader::loadCache(EnvironmentServiceStub::buildEmpty()));
     }
 }

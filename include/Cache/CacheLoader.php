@@ -25,33 +25,24 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core\Env;
+namespace Archict\Core\Cache;
 
-use Composer\InstalledVersions;
-use Dotenv\Dotenv;
+use Archict\Core\Env\EnvironmentService;
+use CuyZ\Valinor\MapperBuilder;
+use CuyZ\Valinor\Normalizer\Format;
+use Psr\SimpleCache\CacheInterface;
 
-/**
- * @internal
- */
-final class Environment implements EnvironmentService
+final class CacheLoader
 {
-    public function __construct()
+    public static function loadCache(EnvironmentService $environment): CacheInterface
     {
-        $root_dir = InstalledVersions::getRootPackage()['install_path'];
-        Dotenv::createImmutable($root_dir)->safeLoad();
-    }
+        $mapper     = (new MapperBuilder())->allowPermissiveTypes()->mapper();
+        $normalizer = (new MapperBuilder())->normalizer(Format::json());
 
-    public function has(string $key): bool
-    {
-        return isset($_ENV[$key]);
-    }
-
-    public function get(string $key, float|bool|int|string|null $default = null): float|bool|int|string|null
-    {
-        if (isset($_ENV[$key])) {
-            return $_ENV[$key];
-        }
-
-        return $default;
+        return match ((string) $environment->get('MODE', 'PROD')) {
+            'PROD'  => new FileSystemCache($mapper, $normalizer),
+            'DEV'   => new MemoryCache(),
+            default => new NoopCache(),
+        };
     }
 }

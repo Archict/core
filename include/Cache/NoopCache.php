@@ -25,33 +25,55 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core\Env;
+namespace Archict\Core\Cache;
 
-use Composer\InstalledVersions;
-use Dotenv\Dotenv;
+use DateInterval;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * @internal
  */
-final class Environment implements EnvironmentService
+final class NoopCache implements CacheInterface
 {
-    public function __construct()
+    public function get(string $key, mixed $default = null): mixed
     {
-        $root_dir = InstalledVersions::getRootPackage()['install_path'];
-        Dotenv::createImmutable($root_dir)->safeLoad();
+        return $default;
+    }
+
+    public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
+    {
+        return false;
+    }
+
+    public function delete(string $key): bool
+    {
+        return false;
+    }
+
+    public function clear(): bool
+    {
+        return false;
+    }
+
+    public function getMultiple(iterable $keys, mixed $default = null): iterable
+    {
+        foreach ($keys as $key) {
+            yield $key => $default;
+        }
+    }
+
+    public function setMultiple(iterable $values, DateInterval|int|null $ttl = null): bool // @phpstan-ignore-line
+    {
+        return false;
+    }
+
+    public function deleteMultiple(iterable $keys): bool
+    {
+        return false;
     }
 
     public function has(string $key): bool
     {
-        return isset($_ENV[$key]);
-    }
-
-    public function get(string $key, float|bool|int|string|null $default = null): float|bool|int|string|null
-    {
-        if (isset($_ENV[$key])) {
-            return $_ENV[$key];
-        }
-
-        return $default;
+        return false;
     }
 }

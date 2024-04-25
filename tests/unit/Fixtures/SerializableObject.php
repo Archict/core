@@ -25,33 +25,22 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core\Env;
+namespace Archict\Core\Fixtures;
 
-use Composer\InstalledVersions;
-use Dotenv\Dotenv;
-
-/**
- * @internal
- */
-final class Environment implements EnvironmentService
+final readonly class SerializableObject
 {
-    public function __construct()
-    {
-        $root_dir = InstalledVersions::getRootPackage()['install_path'];
-        Dotenv::createImmutable($root_dir)->safeLoad();
+    public function __construct(
+        public string $data,
+    ) {
     }
 
-    public function has(string $key): bool
+    public function __serialize(): array
     {
-        return isset($_ENV[$key]);
+        return ['data' => $this->data];
     }
 
-    public function get(string $key, float|bool|int|string|null $default = null): float|bool|int|string|null
+    public function __unserialize(array $data): void // @phpstan-ignore-line
     {
-        if (isset($_ENV[$key])) {
-            return $_ENV[$key];
-        }
-
-        return $default;
+        $this->data = $data['data'] ?? '';
     }
 }

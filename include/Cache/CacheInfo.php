@@ -25,33 +25,18 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core\Env;
-
-use Composer\InstalledVersions;
-use Dotenv\Dotenv;
+namespace Archict\Core\Cache;
 
 /**
  * @internal
  */
-final class Environment implements EnvironmentService
+final class CacheInfo
 {
-    public function __construct()
-    {
-        $root_dir = InstalledVersions::getRootPackage()['install_path'];
-        Dotenv::createImmutable($root_dir)->safeLoad();
-    }
-
-    public function has(string $key): bool
-    {
-        return isset($_ENV[$key]);
-    }
-
-    public function get(string $key, float|bool|int|string|null $default = null): float|bool|int|string|null
-    {
-        if (isset($_ENV[$key])) {
-            return $_ENV[$key];
-        }
-
-        return $default;
+    /**
+     * @param array<non-empty-string, int> $files_ttl For each file id, if it has a ttl, value is max valid timestamp
+     */
+    public function __construct(
+        public array $files_ttl,
+    ) {
     }
 }
