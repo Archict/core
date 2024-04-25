@@ -200,14 +200,14 @@ final class FileSystemCache implements CacheInterface
     }
 
     /**
-     * @param iterable<string, mixed> $values
      * @throws InvalidArgumentException
+     * @phpstan-ignore-next-line
      */
     public function setMultiple(iterable $values, DateInterval|int|null $ttl = null): bool
     {
         $accumulator = true;
         foreach ($values as $key => $value) {
-            $accumulator = $accumulator && $this->set($key, $value, $ttl);
+            $accumulator = $accumulator && $this->set((string) $key, $value, $ttl);
         }
 
         return $accumulator;

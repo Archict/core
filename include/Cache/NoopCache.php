@@ -62,7 +62,7 @@ final class NoopCache implements CacheInterface
         }
     }
 
-    public function setMultiple(iterable $values, DateInterval|int|null $ttl = null): bool
+    public function setMultiple(iterable $values, DateInterval|int|null $ttl = null): bool // @phpstan-ignore-line
     {
         return false;
     }

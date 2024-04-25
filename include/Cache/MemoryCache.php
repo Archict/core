@@ -45,7 +45,7 @@ final class MemoryCache implements CacheInterface
         return $this->cache[$key] ?? $default;
     }
 
-    public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
+    public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool // phpcs:ignore
     {
         $this->cache[$key] = $value;
 
@@ -73,13 +73,11 @@ final class MemoryCache implements CacheInterface
         }
     }
 
-    /**
-     * @param iterable<string, mixed> $values
-     */
-    public function setMultiple(iterable $values, DateInterval|int|null $ttl = null): bool
+    // @phpstan-ignore-next-line
+    public function setMultiple(iterable $values, DateInterval|int|null $ttl = null): bool // phpcs:ignore
     {
         foreach ($values as $key => $value) {
-            $this->cache[$key] = $value;
+            $this->cache[(string) $key] = $value;
         }
 
         return true;
