@@ -27,22 +27,16 @@ declare(strict_types=1);
 
 namespace Archict\Core\Cache;
 
-use Archict\Core\Env\EnvironmentService;
-use CuyZ\Valinor\MapperBuilder;
-use CuyZ\Valinor\Normalizer\Format;
-use Psr\SimpleCache\CacheInterface;
-
-final class CacheLoader
+/**
+ * @internal
+ */
+final class CacheInfo
 {
-    public static function loadCache(EnvironmentService $environment): CacheInterface
-    {
-        $mapper     = (new MapperBuilder())->allowPermissiveTypes()->mapper();
-        $normalizer = (new MapperBuilder())->normalizer(Format::json());
-
-        return match ((string) $environment->get('MODE', 'PROD')) {
-            'PROD'  => new FileSystemCache($mapper, $normalizer),
-            'DEV'   => new MemoryCache(),
-            default => new NoopCache(),
-        };
+    /**
+     * @param array<non-empty-string, int> $files_ttl For each file id, if it has a ttl, value is max valid timestamp
+     */
+    public function __construct(
+        public array $files_ttl,
+    ) {
     }
 }

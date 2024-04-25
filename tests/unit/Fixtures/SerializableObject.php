@@ -25,24 +25,22 @@
 
 declare(strict_types=1);
 
-namespace Archict\Core\Cache;
+namespace Archict\Core\Fixtures;
 
-use Archict\Core\Env\EnvironmentService;
-use CuyZ\Valinor\MapperBuilder;
-use CuyZ\Valinor\Normalizer\Format;
-use Psr\SimpleCache\CacheInterface;
-
-final class CacheLoader
+final readonly class SerializableObject
 {
-    public static function loadCache(EnvironmentService $environment): CacheInterface
-    {
-        $mapper     = (new MapperBuilder())->allowPermissiveTypes()->mapper();
-        $normalizer = (new MapperBuilder())->normalizer(Format::json());
+    public function __construct(
+        public string $data,
+    ) {
+    }
 
-        return match ((string) $environment->get('MODE', 'PROD')) {
-            'PROD'  => new FileSystemCache($mapper, $normalizer),
-            'DEV'   => new MemoryCache(),
-            default => new NoopCache(),
-        };
+    public function __serialize(): array
+    {
+        return ['data' => $this->data];
+    }
+
+    public function __unserialize(array $data): void // @phpstan-ignore-line
+    {
+        $this->data = $data['data'] ?? '';
     }
 }

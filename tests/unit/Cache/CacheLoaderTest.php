@@ -41,4 +41,10 @@ final class CacheLoaderTest extends TestCase
     {
         self::assertInstanceOf(MemoryCache::class, CacheLoader::loadCache(EnvironmentServiceStub::buildWith(['MODE' => 'DEV'])));
     }
+
+    public function testItReturnsFileSystemCache(): void
+    {
+        self::assertInstanceOf(FileSystemCache::class, CacheLoader::loadCache(EnvironmentServiceStub::buildWith(['MODE' => 'PROD'])));
+        self::assertInstanceOf(FileSystemCache::class, CacheLoader::loadCache(EnvironmentServiceStub::buildEmpty()));
+    }
 }

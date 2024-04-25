@@ -27,22 +27,8 @@ declare(strict_types=1);
 
 namespace Archict\Core\Cache;
 
-use Archict\Core\Env\EnvironmentService;
-use CuyZ\Valinor\MapperBuilder;
-use CuyZ\Valinor\Normalizer\Format;
-use Psr\SimpleCache\CacheInterface;
+use Psr\SimpleCache\InvalidArgumentException as SimpleCacheInvalidArgumentException;
 
-final class CacheLoader
+final class InvalidArgumentException extends \InvalidArgumentException implements SimpleCacheInvalidArgumentException
 {
-    public static function loadCache(EnvironmentService $environment): CacheInterface
-    {
-        $mapper     = (new MapperBuilder())->allowPermissiveTypes()->mapper();
-        $normalizer = (new MapperBuilder())->normalizer(Format::json());
-
-        return match ((string) $environment->get('MODE', 'PROD')) {
-            'PROD'  => new FileSystemCache($mapper, $normalizer),
-            'DEV'   => new MemoryCache(),
-            default => new NoopCache(),
-        };
-    }
 }
