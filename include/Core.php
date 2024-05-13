@@ -79,7 +79,7 @@ final readonly class Core
         return new self(
             new LoadBricks(),
             new LoadServices(
-                (new MapperBuilder())->allowPermissiveTypes()->mapper()
+                (new MapperBuilder())->enableFlexibleCasting()->allowSuperfluousKeys()->allowPermissiveTypes()->mapper()
             ),
             new LoadEvents(),
         );

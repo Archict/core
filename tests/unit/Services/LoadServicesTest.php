@@ -45,7 +45,7 @@ class LoadServicesTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->mapper                  = (new MapperBuilder())->allowPermissiveTypes()->mapper();
+        $this->mapper                  = (new MapperBuilder())->enableFlexibleCasting()->allowSuperfluousKeys()->allowPermissiveTypes()->mapper();
         $this->service1                = new ServiceRepresentation(
             new ReflectionClass(Service1::class),
             new Service(Service1Configuration::class, 'bar.yml'),
@@ -73,6 +73,11 @@ class LoadServicesTest extends TestCase
         );
 
         self::assertTrue($manager->has(Service1::class));
+        $service = $manager->get(Service1::class);
+        self::assertInstanceOf(Service1::class, $service);
+        $configuration = $service->configuration;
+        self::assertSame(2, $configuration->nb_workers);
+        self::assertSame(['bar'], $configuration->workers_name);
     }
 
     public function testItCannotLoadServicesWithNonExistentDependencies(): void
