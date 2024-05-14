@@ -1,1 +1,2 @@
 nb_workers: 2
+non-needed-tag: 'foo'

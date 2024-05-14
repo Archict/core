@@ -29,8 +29,12 @@ namespace Archict\Core\Fixtures\brick1\src;
 
 final readonly class Service1Configuration
 {
+    /**
+     * @param string[] $workers_name
+     */
     public function __construct(
         public int $nb_workers,
+        public array $workers_name = ['bar'],
     ) {
     }
 }
