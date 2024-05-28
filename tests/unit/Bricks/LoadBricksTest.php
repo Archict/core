@@ -75,12 +75,14 @@ class LoadBricksTest extends TestCase
         $loader = new LoadBricks();
         $bricks = $loader->loadInstalledBricks();
 
-        self::assertCount(1, $bricks);
-        $brick = $bricks[0];
-        self::assertSame('brick1', $brick->package_name);
-        self::assertSame(__DIR__ . '/../Fixtures/brick1', $brick->package_path);
-        self::assertCount(1, $brick->services);
-        $service = $brick->services[0];
+        self::assertCount(2, $bricks);
+        $brick1 = $bricks[0];
+        self::assertSame('archict/core', $brick1->package_name); // Current package
+        $brick2 = $bricks[1];
+        self::assertSame('brick1', $brick2->package_name);
+        self::assertSame(__DIR__ . '/../Fixtures/brick1', $brick2->package_path);
+        self::assertCount(1, $brick2->services);
+        $service = $brick2->services[0];
         self::assertSame(Service1::class, $service->reflection->name);
         self::assertSame('bar.yml', $service->service_attribute->configuration_filename);
         self::assertSame(Service1Configuration::class, $service->service_attribute->configuration_classname);
