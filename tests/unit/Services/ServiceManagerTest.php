@@ -30,6 +30,7 @@ namespace Archict\Core\Services;
 use Archict\Core\Fixtures\brick1\src\IService1;
 use Archict\Core\Fixtures\brick1\src\Service1;
 use Archict\Core\Fixtures\brick1\src\Service1Configuration;
+use Archict\Core\Fixtures\ServiceWithDependency;
 use PHPUnit\Framework\TestCase;
 
 final class ServiceManagerTest extends TestCase
@@ -51,5 +52,16 @@ final class ServiceManagerTest extends TestCase
         self::assertTrue($manager->has(IService1::class));
         self::assertSame($service, $manager->get(Service1::class));
         self::assertSame($service, $manager->get(IService1::class));
+    }
+
+    public function testItCanInstantiateWithService(): void
+    {
+        $manager = new ServiceManager();
+        $service = new Service1(new Service1Configuration(0));
+        $manager->add($service);
+
+        $object = $manager->instantiateWithServices(ServiceWithDependency::class);
+        self::assertInstanceOf(ServiceWithDependency::class, $object);
+        self::assertSame($service, $object->service_1);
     }
 }
