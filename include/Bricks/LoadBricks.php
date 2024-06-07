@@ -32,7 +32,6 @@ use Archict\Core\Services\ServiceRepresentation;
 use Composer\ClassMapGenerator\ClassMapGenerator;
 use Composer\InstalledVersions;
 use ReflectionClass;
-use Throwable;
 
 /**
  * @internal
@@ -88,15 +87,14 @@ final readonly class LoadBricks implements BricksLoader
      */
     private function getClassMapForPackage(string $package_path): array
     {
-        $generator   = new ClassMapGenerator();
-        $path_to_try = ['src', 'include'];
-        foreach ($path_to_try as $path) {
-            try {
-                $generator->scanPaths($package_path . '/' . $path);
-            } catch (Throwable) { // phpcs:ignore
-                // Ignore it
-            }
-        }
+        $generator = new ClassMapGenerator();
+        $generator->scanPaths(
+            $package_path,
+            null,
+            'classmap',
+            null,
+            ['vendor'],
+        );
 
         return $generator->getClassMap()->getMap();
     }

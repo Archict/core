@@ -3,4 +3,5 @@ parameters:
   paths:
     - include
     - tests
-  checkGenericClassInNonGenericObjectType: false
+  ignoreErrors:
+    - identifier: missingType.generics
