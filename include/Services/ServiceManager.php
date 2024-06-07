@@ -27,6 +27,10 @@ declare(strict_types=1);
 
 namespace Archict\Core\Services;
 
+use ReflectionClass;
+use ReflectionException;
+use ReflectionNamedType;
+
 /**
  * ServiceManager is a Service
  */
@@ -76,6 +80,51 @@ final class ServiceManager
     public function add(object $service): void
     {
         $this->services[$service::class] = $service;
+    }
+
+    /**
+     * @psalm-template C of object
+     * @param class-string<C> $class
+     * @return ?C
+     * @psalm-suppress InvalidReturnType,InvalidReturnStatement
+     */
+    public function instantiateWithServices(string $class): ?object
+    {
+        if (!class_exists($class)) {
+            return null;
+        }
+
+        $reflection  = new ReflectionClass($class);
+        $constructor = $reflection->getConstructor();
+        if ($constructor === null) {
+            try {
+                return $reflection->newInstance();
+            } catch (ReflectionException) {
+                return null;
+            }
+        }
+
+        $parameters = $constructor->getParameters();
+        $args       = [];
+        foreach ($parameters as $parameter) {
+            $type = $parameter->getType();
+            if (!($type instanceof ReflectionNamedType) || $type->isBuiltin()) {
+                return null;
+            }
+
+            $type_name = $type->getName(); // Assert it's a class-string
+            if ($this->has($type_name)) { // @phpstan-ignore-line
+                $args[] = $this->get($type_name); // @phpstan-ignore-line
+            } else {
+                return null;
+            }
+        }
+
+        try {
+            return $reflection->newInstanceArgs($args);
+        } catch (ReflectionException) {
+            return null;
+        }
     }
 
     /**
