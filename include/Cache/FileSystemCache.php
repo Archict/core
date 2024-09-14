@@ -100,7 +100,7 @@ final class FileSystemCache implements CacheInterface
         $content = $this->normalizer->normalize($this->cache_info);
         assert(is_string($content));
         $filename = $this->cache_root . '/' . self::CACHE_INFO_FILE;
-        write($filename, $content, WriteMode::TRUNCATE);
+        write($filename, $content, WriteMode::Truncate);
     }
 
     public function get(string $key, mixed $default = null): mixed
@@ -143,7 +143,7 @@ final class FileSystemCache implements CacheInterface
         }
 
         try {
-            write($path['file'], serialize($value), WriteMode::TRUNCATE);
+            write($path['file'], serialize($value), WriteMode::Truncate);
             if ($ttl !== null) {
                 if (is_int($ttl)) {
                     if ($ttl < 1) {
