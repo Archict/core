@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "archict/brick",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Archict/brick.git",
-                "reference": "7fae635f9af442cf3c1a78494cb7cc7436cd5764"
+                "reference": "1db8c347e8505aed61317a1b2cf1f7a140deebb0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Archict/brick/zipball/7fae635f9af442cf3c1a78494cb7cc7436cd5764",
-                "reference": "7fae635f9af442cf3c1a78494cb7cc7436cd5764",
+                "url": "https://api.github.com/repos/Archict/brick/zipball/1db8c347e8505aed61317a1b2cf1f7a140deebb0",
+                "reference": "1db8c347e8505aed61317a1b2cf1f7a140deebb0",
                 "shasum": ""
             },
             "require": {
@@ -42,9 +42,9 @@
             "description": "Base library for Archict framework",
             "support": {
                 "issues": "https://github.com/Archict/brick/issues",
-                "source": "https://github.com/Archict/brick/tree/v1.0.0"
+                "source": "https://github.com/Archict/brick/tree/v1.0.1"
             },
-            "time": "2024-07-10T15:56:56+00:00"
+            "time": "2024-09-14T08:43:07+00:00"
         },
         {
             "name": "azjezz/psl",
