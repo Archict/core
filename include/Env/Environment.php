@@ -49,7 +49,7 @@ final class Environment implements EnvironmentService
     public function get(string $key, float|bool|int|string|null $default = null): float|bool|int|string|null
     {
         if (isset($_ENV[$key])) {
-            return $_ENV[$key];
+            return $_ENV[$key]; // @phpstan-ignore return.type
         }
 
         return $default;
