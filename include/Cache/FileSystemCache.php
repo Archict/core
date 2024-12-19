@@ -65,10 +65,15 @@ final class FileSystemCache implements CacheInterface
     public function __construct(
         private readonly TreeMapper $mapper,
         private readonly Normalizer $normalizer,
+        string $cache_dir,
     ) {
-        $root             = InstalledVersions::getRootPackage()['install_path'];
-        $root             = rtrim($root, '/');
-        $this->cache_root = $root . '/cache';
+        $root = InstalledVersions::getRootPackage()['install_path'];
+        $root = rtrim($root, '/');
+        if ($cache_dir !== '') {
+            $this->cache_root = $root . '/' . $cache_dir;
+        } else {
+            $this->cache_root = $root . '/cache';
+        }
 
         if (!exists($this->cache_root) || !is_directory($this->cache_root)) {
             create_directory($this->cache_root);
