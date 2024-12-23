@@ -27,6 +27,7 @@ declare(strict_types=1);
 
 namespace Archict\Core\Services;
 
+use Archict\Core\Env\EnvironmentService;
 use Composer\InstalledVersions;
 use CuyZ\Valinor\Mapper\MappingError;
 use CuyZ\Valinor\Mapper\TreeMapper;
@@ -137,7 +138,7 @@ final readonly class LoadServices implements ServicesLoader
             try {
                 return $this->mapper->map(
                     $type_name,
-                    Yaml::parse(read($this->getConfigurationFilenameForService($service)))
+                    Yaml::parse(read($this->getConfigurationFilenameForService($service, $manager->get(EnvironmentService::class))))
                 );
             } catch (MappingError $error) {
                 throw new ServiceConfigurationFileFormatInvalidException($service->reflection->getName(), $error);
@@ -151,14 +152,23 @@ final readonly class LoadServices implements ServicesLoader
      * @return non-empty-string
      * @throws ServiceConfigurationFileNotFoundException
      */
-    private function getConfigurationFilenameForService(ServiceRepresentation $representation): string
+    private function getConfigurationFilenameForService(ServiceRepresentation $representation, ?EnvironmentService $env): string
     {
         $base_filename = $representation->service_attribute->configuration_filename ?? (strtolower($representation->reflection->getShortName()) . '.yml');
 
         $package_config = $representation->package_path . '/config/' . $base_filename;
-        $root_config    = InstalledVersions::getRootPackage()['install_path'] . '/config/' . $base_filename;
+        if ($env !== null) {
+            $config_dir = (string) $env->get('CONFIG_DIR', InstalledVersions::getRootPackage()['install_path'] . '/config/');
+            if ($config_dir !== '' && $config_dir[0] !== '/') {
+                $config_dir = InstalledVersions::getRootPackage()['install_path'] . '/' . $config_dir;
+            }
+        } else {
+            $config_dir = InstalledVersions::getRootPackage()['install_path'] . '/config/';
+        }
 
-        if (exists($root_config)) {
+        $root_config = $config_dir . $base_filename;
+
+        if ($root_config !== '' && exists($root_config)) {
             return $root_config;
         }
 
