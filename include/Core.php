@@ -54,7 +54,7 @@ final readonly class Core
         private ServicesLoader $services_loader,
         private EventsLoader $events_loader,
     ) {
-        $this->service_manager = new ServiceManager();
+        $this->service_manager = new ServiceManager((new MapperBuilder())->enableFlexibleCasting()->allowSuperfluousKeys()->allowPermissiveTypes()->mapper());
         $this->event_manager   = new EventManager($this->service_manager);
         $environment           = new Environment();
         $this->service_manager->add($this->event_manager);
@@ -78,9 +78,7 @@ final readonly class Core
     {
         return new self(
             new LoadBricks(),
-            new LoadServices(
-                (new MapperBuilder())->enableFlexibleCasting()->allowSuperfluousKeys()->allowPermissiveTypes()->mapper()
-            ),
+            new LoadServices(),
             new LoadEvents(),
         );
     }

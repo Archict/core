@@ -31,20 +31,29 @@ use Archict\Core\Fixtures\brick1\src\IService1;
 use Archict\Core\Fixtures\brick1\src\Service1;
 use Archict\Core\Fixtures\brick1\src\Service1Configuration;
 use Archict\Core\Fixtures\ServiceWithDependency;
+use CuyZ\Valinor\Mapper\TreeMapper;
+use CuyZ\Valinor\MapperBuilder;
 use PHPUnit\Framework\TestCase;
 
 final class ServiceManagerTest extends TestCase
 {
+    private TreeMapper $mapper;
+
+    protected function setUp(): void
+    {
+        $this->mapper = (new MapperBuilder())->enableFlexibleCasting()->allowSuperfluousKeys()->allowPermissiveTypes()->mapper();
+    }
+
     public function testItStoreItself(): void
     {
-        $manager = new ServiceManager();
+        $manager = new ServiceManager($this->mapper);
         self::assertTrue($manager->has(ServiceManager::class));
         self::assertSame($manager, $manager->get(ServiceManager::class));
     }
 
     public function testItCanStoreThenRetrieveService(): void
     {
-        $manager = new ServiceManager();
+        $manager = new ServiceManager($this->mapper);
         $service = new Service1(new Service1Configuration(0));
         $manager->add($service);
 
@@ -56,7 +65,7 @@ final class ServiceManagerTest extends TestCase
 
     public function testItCanInstantiateWithService(): void
     {
-        $manager = new ServiceManager();
+        $manager = new ServiceManager($this->mapper);
         $service = new Service1(new Service1Configuration(0));
         $manager->add($service);
 

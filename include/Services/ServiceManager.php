@@ -27,9 +27,17 @@ declare(strict_types=1);
 
 namespace Archict\Core\Services;
 
+use Archict\Core\Env\EnvironmentService;
+use Composer\InstalledVersions;
+use CuyZ\Valinor\Mapper\MappingError;
+use CuyZ\Valinor\Mapper\TreeMapper;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
+use ReflectionParameter;
+use Symfony\Component\Yaml\Yaml;
+use function Psl\File\read;
+use function Psl\Filesystem\exists;
 
 /**
  * ServiceManager is a Service
@@ -37,13 +45,27 @@ use ReflectionNamedType;
 final class ServiceManager
 {
     /**
-     * @var array<class-string, object>
+     * @var array<class-string, array{
+     *     representation: ServiceRepresentation,
+     *     instance: ?object,
+     * }>
      */
     private array $services = [];
 
-    public function __construct()
+    public function __construct(private readonly TreeMapper $mapper)
     {
         $this->add($this);
+    }
+
+    /**
+     * @internal
+     */
+    public function addRepresentation(ServiceRepresentation $service): void
+    {
+        $this->services[$service->reflection->getName()] = [
+            'representation' => $service,
+            'instance'       => null,
+        ];
     }
 
     /**
@@ -64,13 +86,19 @@ final class ServiceManager
      * @psalm-template S of object
      * @psalm-param class-string<S> $classname
      * @psalm-return ?S
+     * @throws ServiceConfigurationFileFormatInvalidException
+     * @throws ServiceConfigurationFileNotFoundException
      * @psalm-suppress InvalidReturnType,InvalidReturnStatement
      */
     public function get(string $classname): ?object
     {
         foreach ($this->services as $service_class => $service) {
             if ($this->isServiceMatchClassName($service_class, $classname)) {
-                return $service; // @phpstan-ignore-line
+                if ($service['instance'] === null) {
+                    $this->services[$service_class]['instance'] = $this->instantiateWithServicesIntern($service_class, $service['representation']);
+                }
+
+                return $this->services[$service_class]['instance']; // @phpstan-ignore return.type
             }
         }
 
@@ -79,16 +107,29 @@ final class ServiceManager
 
     public function add(object $service): void
     {
-        $this->services[$service::class] = $service;
+        $this->services[$service::class]['instance'] = $service;
     }
 
     /**
      * @psalm-template C of object
      * @param class-string<C> $class
      * @return ?C
-     * @psalm-suppress InvalidReturnType,InvalidReturnStatement
+     * @throws ServiceConfigurationFileFormatInvalidException
+     * @throws ServiceConfigurationFileNotFoundException
      */
     public function instantiateWithServices(string $class): ?object
+    {
+        return $this->instantiateWithServicesIntern($class, null);
+    }
+
+    /**
+     * @psalm-template C of object
+     * @param class-string<C> $class
+     * @return ?C
+     * @throws ServiceConfigurationFileFormatInvalidException
+     * @throws ServiceConfigurationFileNotFoundException
+     */
+    private function instantiateWithServicesIntern(string $class, ?ServiceRepresentation $service): ?object
     {
         if (!class_exists($class)) {
             return null;
@@ -107,17 +148,12 @@ final class ServiceManager
         $parameters = $constructor->getParameters();
         $args       = [];
         foreach ($parameters as $parameter) {
-            $type = $parameter->getType();
-            if (!($type instanceof ReflectionNamedType) || $type->isBuiltin()) {
+            $arg = $this->getServiceParameter($parameter, $this, $service);
+            if ($arg === null) {
                 return null;
             }
 
-            $type_name = $type->getName(); // Assert it's a class-string
-            if ($this->has($type_name)) { // @phpstan-ignore-line
-                $args[] = $this->get($type_name); // @phpstan-ignore-line
-            } else {
-                return null;
-            }
+            $args[] = $arg;
         }
 
         try {
@@ -125,6 +161,67 @@ final class ServiceManager
         } catch (ReflectionException) {
             return null;
         }
+    }
+
+    /**
+     * @throws ServiceConfigurationFileNotFoundException
+     * @throws ServiceConfigurationFileFormatInvalidException
+     */
+    private function getServiceParameter(ReflectionParameter $parameter, ServiceManager $manager, ?ServiceRepresentation $service): mixed
+    {
+        $type = $parameter->getType();
+        if (!($type instanceof ReflectionNamedType) || $type->isBuiltin()) {
+            return null;
+        }
+
+        $type_name = $type->getName(); // Assert it's a class-string
+        if ($manager->has($type_name)) { // @phpstan-ignore-line
+            return $manager->get($type_name); // @phpstan-ignore-line
+        }
+
+        if ($service !== null && $service->service_attribute->configuration_classname === $type_name) {
+            try {
+                return $this->mapper->map(
+                    $type_name,
+                    Yaml::parse(read($this->getConfigurationFilenameForService($service, $manager->get(EnvironmentService::class)))),
+                );
+            } catch (MappingError $error) {
+                throw new ServiceConfigurationFileFormatInvalidException($service->reflection->getName(), $error);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return non-empty-string
+     * @throws ServiceConfigurationFileNotFoundException
+     */
+    private function getConfigurationFilenameForService(ServiceRepresentation $representation, ?EnvironmentService $env): string
+    {
+        $base_filename = $representation->service_attribute->configuration_filename ?? (strtolower($representation->reflection->getShortName()) . '.yml');
+
+        $package_config = $representation->package_path . '/config/' . $base_filename;
+        if ($env !== null) {
+            $config_dir = (string) $env->get('CONFIG_DIR', InstalledVersions::getRootPackage()['install_path'] . '/config/');
+            if ($config_dir !== '' && $config_dir[0] !== '/') {
+                $config_dir = InstalledVersions::getRootPackage()['install_path'] . '/' . $config_dir;
+            }
+        } else {
+            $config_dir = InstalledVersions::getRootPackage()['install_path'] . '/config/';
+        }
+
+        $root_config = $config_dir . $base_filename;
+
+        if ($root_config !== '' && exists($root_config)) {
+            return $root_config;
+        }
+
+        if (exists($package_config)) {
+            return $package_config;
+        }
+
+        throw new ServiceConfigurationFileNotFoundException($representation->reflection->getName());
     }
 
     /**

@@ -29,6 +29,7 @@ namespace Archict\Core\Event;
 
 use Archict\Core\Fixtures\brick1\src\MyEvent;
 use Archict\Core\Services\ServiceManager;
+use CuyZ\Valinor\MapperBuilder;
 use PHPUnit\Framework\TestCase;
 
 final class EventManagerTest extends TestCase
@@ -43,7 +44,7 @@ final class EventManagerTest extends TestCase
             }
         };
 
-        $service_manager = new ServiceManager();
+        $service_manager = new ServiceManager((new MapperBuilder())->enableFlexibleCasting()->allowSuperfluousKeys()->allowPermissiveTypes()->mapper());
         $service_manager->add($service);
         $event_manager = new EventManager($service_manager);
         $event_manager->addListener(MyEvent::class, $service::class, 'listenEvent');
@@ -69,7 +70,7 @@ final class EventManagerTest extends TestCase
             }
         };
 
-        $service_manager = new ServiceManager();
+        $service_manager = new ServiceManager((new MapperBuilder())->enableFlexibleCasting()->allowSuperfluousKeys()->allowPermissiveTypes()->mapper());
         $service_manager->add($service1);
         $service_manager->add($service2);
         $event_manager = new EventManager($service_manager);
@@ -87,7 +88,7 @@ final class EventManagerTest extends TestCase
     public function testEventCanBeNotListened(): void
     {
         $event         = new MyEvent();
-        $event_manager = new EventManager(new ServiceManager());
+        $event_manager = new EventManager(new ServiceManager((new MapperBuilder())->enableFlexibleCasting()->allowSuperfluousKeys()->allowPermissiveTypes()->mapper()));
 
         $event->nb_listened = 0;
         $event->listened    = false;

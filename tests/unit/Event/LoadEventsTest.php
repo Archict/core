@@ -31,6 +31,7 @@ use Archict\Brick\Service;
 use Archict\Core\Fixtures\brick1\src\Service1;
 use Archict\Core\Services\ServiceManager;
 use Archict\Core\Services\ServiceRepresentation;
+use CuyZ\Valinor\MapperBuilder;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -41,7 +42,7 @@ final class LoadEventsTest extends TestCase
         $loader = new LoadEvents();
         self::expectNotToPerformAssertions();
         $loader->loadEventsListeners(
-            new EventManager(new ServiceManager()),
+            new EventManager(new ServiceManager((new MapperBuilder())->enableFlexibleCasting()->allowSuperfluousKeys()->allowPermissiveTypes()->mapper())),
             [new ServiceRepresentation(new ReflectionClass(Service1::class), new Service(), '')]
         );
     }
