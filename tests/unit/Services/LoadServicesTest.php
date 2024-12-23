@@ -67,15 +67,15 @@ class LoadServicesTest extends TestCase
     public function testItCanLoadNoServices(): void
     {
         self::expectNotToPerformAssertions();
-        (new LoadServices($this->mapper))->loadServicesIntoManager(new ServiceManager(), []);
+        (new LoadServices())->loadServicesIntoManager(new ServiceManager($this->mapper), []);
     }
 
     public function testItCanLoadServices(): void
     {
-        $manager = new ServiceManager();
+        $manager = new ServiceManager($this->mapper);
         $manager->add(new Environment());
         $_ENV['CONFIG_DIR'] = __DIR__ . '/../Fixtures/brick1/custom_config_dir/';
-        (new LoadServices($this->mapper))->loadServicesIntoManager(
+        (new LoadServices())->loadServicesIntoManager(
             $manager,
             [$this->service1],
         );
@@ -88,27 +88,27 @@ class LoadServicesTest extends TestCase
         self::assertSame(['bar'], $configuration->workers_name);
     }
 
-    public function testItCannotLoadServicesWithNonExistentDependencies(): void
+    public function testItCannotInstantiateServicesWithNonExistentDependencies(): void
     {
-        $manager = new ServiceManager();
-        self::expectException(ServicesCannotBeLoadedException::class);
-        (new LoadServices($this->mapper))->loadServicesIntoManager(
+        $manager = new ServiceManager($this->mapper);
+        (new LoadServices())->loadServicesIntoManager(
             $manager,
             [$this->service_with_dependency],
         );
+        self::assertNull($manager->get(ServiceWithDependency::class));
     }
 
-    public function testItCanLoadServicesWithDependencies(): void
+    public function testItCanInstantiateServicesWithDependencies(): void
     {
-        $manager = new ServiceManager();
+        $manager = new ServiceManager($this->mapper);
         $manager->add(new Environment());
         $_ENV['CONFIG_DIR'] = 'tests/unit/Fixtures/brick1/custom_config_dir/';
-        (new LoadServices($this->mapper))->loadServicesIntoManager(
+        (new LoadServices())->loadServicesIntoManager(
             $manager,
             [$this->service1, $this->service_with_dependency],
         );
 
-        self::assertTrue($manager->has(Service1::class));
-        self::assertTrue($manager->has(ServiceWithDependency::class));
+        self::assertNotNull($manager->get(ServiceWithDependency::class));
+        self::assertNotNull($manager->get(Service1::class));
     }
 }
