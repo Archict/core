@@ -43,7 +43,8 @@ class FileSystemCacheTest extends TestCase
     {
         $this->cache = new FileSystemCache(
             (new MapperBuilder())->allowPermissiveTypes()->mapper(),
-            (new MapperBuilder())->normalizer(Format::json())
+            (new MapperBuilder())->normalizer(Format::json()),
+            '',
         );
     }
 
@@ -113,5 +114,16 @@ class FileSystemCacheTest extends TestCase
         self::assertTrue($this->cache->set('MyObject', $object));
         self::assertTrue($this->cache->has('MyObject'));
         self::assertEquals($object, $this->cache->get('MyObject'));
+    }
+
+    public function testItCreatesDirAsTellInEnv(): void
+    {
+        $cache = new FileSystemCache(
+            (new MapperBuilder())->allowPermissiveTypes()->mapper(),
+            (new MapperBuilder())->normalizer(Format::json()),
+            '/custom-dir',
+        );
+        self::assertTrue(exists(__DIR__ . '/../../../custom-dir'));
+        self::assertTrue(is_directory(__DIR__ . '/../../../custom-dir'));
     }
 }

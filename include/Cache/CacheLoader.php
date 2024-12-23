@@ -40,7 +40,7 @@ final class CacheLoader
         $normalizer = (new MapperBuilder())->normalizer(Format::json());
 
         return match ((string) $environment->get('MODE', 'PROD')) {
-            'PROD'  => new FileSystemCache($mapper, $normalizer),
+            'PROD'  => new FileSystemCache($mapper, $normalizer, (string) $environment->get('CACHE_DIR', '')),
             'DEV'   => new MemoryCache(),
             default => new NoopCache(),
         };
