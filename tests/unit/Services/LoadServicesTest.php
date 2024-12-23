@@ -28,6 +28,7 @@ declare(strict_types=1);
 namespace Archict\Core\Services;
 
 use Archict\Brick\Service;
+use Archict\Core\Env\Environment;
 use Archict\Core\Fixtures\brick1\src\Service1;
 use Archict\Core\Fixtures\brick1\src\Service1Configuration;
 use Archict\Core\Fixtures\ServiceWithDependency;
@@ -58,6 +59,11 @@ class LoadServicesTest extends TestCase
         );
     }
 
+    protected function tearDown(): void
+    {
+        unset($_ENV['CONFIG_DIR']);
+    }
+
     public function testItCanLoadNoServices(): void
     {
         self::expectNotToPerformAssertions();
@@ -67,9 +73,11 @@ class LoadServicesTest extends TestCase
     public function testItCanLoadServices(): void
     {
         $manager = new ServiceManager();
+        $manager->add(new Environment());
+        $_ENV['CONFIG_DIR'] = __DIR__ . '/../Fixtures/brick1/custom_config_dir/';
         (new LoadServices($this->mapper))->loadServicesIntoManager(
             $manager,
-            [$this->service1]
+            [$this->service1],
         );
 
         self::assertTrue($manager->has(Service1::class));
@@ -86,16 +94,18 @@ class LoadServicesTest extends TestCase
         self::expectException(ServicesCannotBeLoadedException::class);
         (new LoadServices($this->mapper))->loadServicesIntoManager(
             $manager,
-            [$this->service_with_dependency]
+            [$this->service_with_dependency],
         );
     }
 
     public function testItCanLoadServicesWithDependencies(): void
     {
         $manager = new ServiceManager();
+        $manager->add(new Environment());
+        $_ENV['CONFIG_DIR'] = 'tests/unit/Fixtures/brick1/custom_config_dir/';
         (new LoadServices($this->mapper))->loadServicesIntoManager(
             $manager,
-            [$this->service1, $this->service_with_dependency]
+            [$this->service1, $this->service_with_dependency],
         );
 
         self::assertTrue($manager->has(Service1::class));
